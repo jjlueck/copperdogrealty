@@ -50,10 +50,9 @@ export function Footer() {
             <h3 className="font-semibold mb-4 text-foreground">Contact</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>Milford, Iowa</li>
-              <li>Iowa Great Lakes Region</li>
               <li className="pt-2">
-                <a href="mailto:info@copperdogrealty.com" className="hover:text-primary transition-colors">
-                  info@copperdogrealty.com
+                <a href="mailto:beth@copperdogrealty.com" className="hover:text-primary transition-colors">
+                  beth@copperdogrealty.com
                 </a>
               </li>
               <li>

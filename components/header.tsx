@@ -8,7 +8,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/images/CopperDog_horizontal.png"
+            src="/images/CopperDog_horizontal.svg"
             alt="Copper Dog Realty"
             width={180}
             height={50}

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { Heart, MapPin, Bed, Bath, Square } from "lucide-react"
+import Link from "next/link"
 
 const properties = [
   {
@@ -181,7 +182,9 @@ export default function PropertiesPage() {
               We're constantly adding new listings and have access to properties not yet on the market. Let us help you
               find your perfect home.
             </p>
-            <Button size="lg">Contact Our Team</Button>
+            <Button size="lg" asChild>
+              <Link href="/team">Contact Our Team</Link>
+            </Button>
           </div>
         </section>
       </main>

@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build --no-lint",
-    "deploy": "next build --no-lint && gh-pages -d out",
+    "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
+    "deploy": "next build && gh-pages -d out",
     "start": "next start"
   },
   "dependencies": {

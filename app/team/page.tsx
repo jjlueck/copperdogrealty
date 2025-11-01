@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import Image from "next/image"
 import { Mail, Phone } from "lucide-react"
+import { Carousel } from "@/components/ui/carousel"
 
 const teamMembers = [
   {
@@ -48,6 +49,15 @@ const teamMembers = [
   },
 ]
 
+const dachshundImages = [
+  "/images/placeholders/property-1.jpg",
+  "/images/placeholders/property-2.jpg",
+  "/images/placeholders/property-3.jpg",
+  "/images/placeholders/property-4.jpg",
+  "/images/placeholders/property-5.jpg",
+  "/images/placeholders/property-6.jpg",
+]
+
 export default function TeamPage() {
   return (
     <div className="min-h-screen flex flex-col">
@@ -72,58 +82,104 @@ export default function TeamPage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {teamMembers.map((member) => (
-                <Card key={member.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
-                    <div className="sm:col-span-1">
-                      <div className="relative aspect-square rounded-lg overflow-hidden">
-                        <Image
-                          src={member.image || "/placeholder.svg"}
-                          alt={member.name}
-                          fill
-                          className="object-cover"
-                        />
+                (member.id === 3 || member.id === 4) ? (
+                  <Card key={member.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
+                      <div className="sm:col-span-1">
+                        <div className="relative aspect-square rounded-lg overflow-hidden">
+                          <Carousel images={dachshundImages} width={300} height={300} />
+                        </div>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <h3 className="text-2xl font-bold text-foreground mb-1">{member.name}</h3>
+                        <p className="text-primary font-medium mb-4">{member.role}</p>
+                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{member.bio}</p>
+                        <div className="mb-4">
+                          <p className="text-xs font-semibold text-foreground mb-2">Specialties:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {member.specialties.map((specialty, index) => (
+                              <span
+                                key={index}
+                                className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full"
+                              >
+                                {specialty}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <a
+                            href={`mailto:${member.email}`}
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Mail className="w-4 h-4" />
+                            {member.email}
+                          </a>
+                          <a
+                            href={`tel:${member.phone}`}
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Phone className="w-4 h-4" />
+                            {member.phone}
+                          </a>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="sm:col-span-2">
-                      <h3 className="text-2xl font-bold text-foreground mb-1">{member.name}</h3>
-                      <p className="text-primary font-medium mb-4">{member.role}</p>
-
-                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{member.bio}</p>
-
-                      <div className="mb-4">
-                        <p className="text-xs font-semibold text-foreground mb-2">Specialties:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {member.specialties.map((specialty, index) => (
-                            <span
-                              key={index}
-                              className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full"
-                            >
-                              {specialty}
-                            </span>
-                          ))}
+                  </Card>
+                ) : (
+                  <Card key={member.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
+                      <div className="sm:col-span-1">
+                        <div className="relative aspect-square rounded-lg overflow-hidden">
+                          <Image
+                            src={member.image || "/placeholder.svg"}
+                            alt={member.name}
+                            fill
+                            className="object-cover"
+                          />
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-2">
-                        <a
-                          href={`mailto:${member.email}`}
-                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          <Mail className="w-4 h-4" />
-                          {member.email}
-                        </a>
-                        <a
-                          href={`tel:${member.phone}`}
-                          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
-                        >
-                          <Phone className="w-4 h-4" />
-                          {member.phone}
-                        </a>
+                      <div className="sm:col-span-2">
+                        <h3 className="text-2xl font-bold text-foreground mb-1">{member.name}</h3>
+                        <p className="text-primary font-medium mb-4">{member.role}</p>
+
+                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{member.bio}</p>
+
+                        <div className="mb-4">
+                          <p className="text-xs font-semibold text-foreground mb-2">Specialties:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {member.specialties.map((specialty, index) => (
+                              <span
+                                key={index}
+                                className="text-xs bg-secondary text-secondary-foreground px-3 py-1 rounded-full"
+                              >
+                                {specialty}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <a
+                            href={`mailto:${member.email}`}
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Mail className="w-4 h-4" />
+                            {member.email}
+                          </a>
+                          <a
+                            href={`tel:${member.phone}`}
+                            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Phone className="w-4 h-4" />
+                            {member.phone}
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                )
               ))}
             </div>
           </div>

@@ -10,9 +10,16 @@ export function Header() {
           <Image
             src="/images/CopperDog_icon-solid.svg"
             alt="Copper Dog Realty"
-            width={180}
-            height={50}
-            className="h-12 w-auto"
+            width={23}
+            height={23}
+            className="h-6 w-auto md:h-8"
+          />
+          <Image
+            src="/images/CopperDog_word-mark.svg"
+            alt="Copper Dog Realty"
+            width={30}
+            height={12}
+            className="h-3 w-auto md:h-8"
           />
         </Link>
 

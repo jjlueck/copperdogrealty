@@ -1,3 +1,5 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -6,8 +8,57 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Mail, Phone, MapPin } from "lucide-react"
+import React, { useState } from "react"
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    interest: "",
+    message: "",
+  })
+  const [status, setStatus] = useState("")
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value })
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setStatus("Sending...")
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setStatus("Message sent successfully!")
+        setFormData({ // Clear form after successful submission
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          interest: "",
+          message: "",
+        })
+      } else {
+        setStatus(`Failed to send message: ${data.message || "Unknown error"}`)
+      }
+    } catch (error) {
+      console.error("Submission error:", error)
+      setStatus("An error occurred while sending the message.")
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -38,27 +89,27 @@ export default function ContactPage() {
                   <CardContent className="p-6 md:p-8">
                     <h2 className="text-2xl font-bold text-foreground mb-6">Send Us a Message</h2>
 
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <Label htmlFor="firstName">First Name</Label>
-                          <Input id="firstName" placeholder="John" />
+                          <Input id="firstName" placeholder="John" value={formData.firstName} onChange={handleChange} />
                         </div>
 
                         <div className="space-y-2">
                           <Label htmlFor="lastName">Last Name</Label>
-                          <Input id="lastName" placeholder="Doe" />
+                          <Input id="lastName" placeholder="Doe" value={formData.lastName} onChange={handleChange} />
                         </div>
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" placeholder="john@example.com" />
+                        <Input id="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} />
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" type="tel" placeholder="(555) 123-4567" />
+                        <Input id="phone" type="tel" placeholder="(555) 123-4567" value={formData.phone} onChange={handleChange} />
                       </div>
 
                       <div className="space-y-2">
@@ -66,6 +117,8 @@ export default function ContactPage() {
                         <select
                           id="interest"
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          value={formData.interest}
+                          onChange={handleChange}
                         >
                           <option value="">Select an option</option>
                           <option value="buying">Buying a Home</option>
@@ -78,12 +131,13 @@ export default function ContactPage() {
 
                       <div className="space-y-2">
                         <Label htmlFor="message">Message</Label>
-                        <Textarea id="message" placeholder="Tell us about what you're looking for..." rows={6} />
+                        <Textarea id="message" placeholder="Tell us about what you're looking for..." rows={6} value={formData.message} onChange={handleChange} />
                       </div>
 
-                      <Button type="submit" size="lg" className="w-full">
+                      <Button type="submit" size="lg" className="w-full" disabled={status === "Sending..."}>
                         Send Message
                       </Button>
+                      {status && <p className="text-center text-sm mt-2">{status}</p>}
                     </form>
                   </CardContent>
                 </Card>

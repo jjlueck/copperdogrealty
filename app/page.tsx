@@ -79,7 +79,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="font-semibold text-lg mb-2 text-foreground">Local Expertise</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Deep knowledge of Milford and the Iowa Great Lakes region
+                    Deep knowledge of the Iowa Great Lakes region
                   </p>
                 </CardContent>
               </Card>

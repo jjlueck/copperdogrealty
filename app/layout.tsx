@@ -10,7 +10,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Copper Dog Realty - Iowa Great Lakes Real Estate",
   description:
-    "Boutique real estate brokerage serving Milford, Iowa and the Iowa Great Lakes region. Find your perfect home with personalized service.",
+    "Boutique real estate brokerage serving the Iowa Great Lakes region. Find your perfect home with personalized service.",
   generator: "v0.app",
   icons: {
     icon: "/images/CopperDog_icon-solid.png",

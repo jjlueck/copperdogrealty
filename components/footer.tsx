@@ -15,7 +15,7 @@ export function Footer() {
               className="h-12 w-auto mb-4"
             />
             <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-              Boutique real estate brokerage serving Milford, Iowa and the Iowa Great Lakes region. We believe every
+              Boutique real estate brokerage serving the Iowa Great Lakes region. We believe every
               home deserves a loving family, just like every dog deserves a forever home.
             </p>
           </div>

@@ -41,7 +41,7 @@ export default function AboutPage() {
                     determined to find the perfect match, and we put our whole hearts into every transaction.
                   </p>
                   <p>
-                    Based in Milford, Iowa, we serve the beautiful Iowa Great Lakes region with a deep commitment to our
+                    Serving the beautiful Iowa Great Lakes region with a deep commitment to our
                     community. We're not just selling houses—we're helping families find where they belong, supporting
                     local businesses, and building stronger neighborhoods one home at a time.
                   </p>

@@ -35,17 +35,17 @@ const teamMembers = [
     email: "emily@copperdogrealty.com",
     phone: "(555) 123-4569",
     image: "/images/placeholders/team-3.jpg",
-    specialties: ["Family Homes", "New Construction", "Neighborhood Expert"],
+    specialties: ["Eating", "Naps", "Cuddles"],
   },
   {
     id: 4,
     name: "Wheeeeeeee!",
     role: "Commercial Real Estate Specialist",
-    bio: "David brings expertise in commercial properties and investment opportunities. His strategic approach and market insights help businesses find the perfect location to grow and thrive.",
-    email: "david@copperdogrealty.com",
+    bio: "No comment",
+    email: "webmaster@copperdogrealty.com",
     phone: "(555) 123-4570",
     image: "/images/placeholders/team-4.jpg",
-    specialties: ["Commercial Sales", "Business Properties", "Investment Analysis"],
+    specialties: ["Being Enthusiastic"],
   },
 ]
 

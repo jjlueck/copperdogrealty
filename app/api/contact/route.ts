@@ -13,7 +13,7 @@ if (typeof globalThis.atob === "undefined") {
 export async function POST(request: Request) {
   try {
     const formData = await request.json()
-    const { firstName, lastName, email, phone, interest, message } = formData
+    const { firstName, lastName, email, phone, interest, message, preferredContact } = formData;
 
     // Basic validation
     if (!firstName || !lastName || !email || !message) {
@@ -41,7 +41,8 @@ export async function POST(request: Request) {
         <p><strong>Name:</strong> ${firstName} ${lastName}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone || "N/A"}</p>
-        <p><strong>Interest:</strong> ${interest || "N/A"}</p>
+        <p><strong>Interest:</strong> ${interest || 'N/A'}</p>
+        <p><strong>Preferred Contact Method:</strong> ${preferredContact || 'N/A'}</p>
         <p><strong>Message:</strong></p>
         <p>${message}</p>
       `,

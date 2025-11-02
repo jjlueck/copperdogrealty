@@ -32,7 +32,7 @@ const teamMembers = [
     name: "Dogs that need homes. Homes that need dogs.",
     role: "Real Estate Agent",
     bio: "Emily's enthusiasm and local knowledge make her an invaluable resource for anyone looking to call the Iowa Great Lakes home. She's passionate about matching families with properties that truly fit their lifestyle.",
-    email: "emily@copperdogrealty.com",
+    email: "bestdog@copperdogrealty.com",
     phone: "(555) 123-4569",
     image: "/images/placeholders/team-3.jpg",
     specialties: ["Eating", "Naps", "Cuddles"],

@@ -34,7 +34,7 @@ const teamMembers = [
     bio: "Emily's enthusiasm and local knowledge make her an invaluable resource for anyone looking to call the Iowa Great Lakes home. She's passionate about matching families with properties that truly fit their lifestyle.",
     email: "bestdog@copperdogrealty.com",
     phone: "(555) 123-4569",
-    image: "/images/placeholders/team-3.jpg",
+    image: "/images/dogs/team-3.jpg",
     specialties: ["Eating", "Naps", "Cuddles"],
   },
   {
@@ -44,18 +44,18 @@ const teamMembers = [
     bio: "No comment",
     email: "webmaster@copperdogrealty.com",
     phone: "(555) 123-4570",
-    image: "/images/placeholders/team-4.jpg",
+    image: "/images/dogs/team-4.jpg",
     specialties: ["Being Enthusiastic"],
   },
 ]
 
 const dachshundImages = [
-  "/images/placeholders/property-1.jpg",
-  "/images/placeholders/property-2.jpg",
-  "/images/placeholders/property-3.jpg",
-  "/images/placeholders/property-4.jpg",
-  "/images/placeholders/property-5.jpg",
-  "/images/placeholders/property-6.jpg",
+  "/images/dogs/dog-1.jpg",
+  "/images/dogs/dog-2.jpg",
+  "/images/dogs/dog-3.jpg",
+  "/images/dogs/dog-4.jpg",
+  "/images/dogs/dog-5.jpg",
+  "/images/dogs/dog-6.jpg",
 ]
 
 export default function TeamPage() {

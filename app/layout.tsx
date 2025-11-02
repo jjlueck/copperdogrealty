@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description:
     "Boutique real estate brokerage serving Milford, Iowa and the Iowa Great Lakes region. Find your perfect home with personalized service.",
   generator: "v0.app",
+  icons: {
+    icon: "/images/CopperDog_icon-solid.png",
+  },
 }
 
 export default function RootLayout({

@@ -114,6 +114,21 @@ export default function ContactPage() {
                       </div>
 
                       <div className="space-y-2">
+                        <Label htmlFor="preferredContact">Preferred Contact Method</Label>
+                        <select
+                          id="preferredContact"
+                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          value={formData.preferredContact}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select an option</option>
+                          <option value="email">Email</option>
+                          <option value="phone">Phone</option>
+                          <option value="text">Text Message</option>
+                        </select>
+                      </div>
+
+                      <div className="space-y-2">
                         <Label htmlFor="interest">I'm Interested In</Label>
                         <select
                           id="interest"
@@ -133,21 +148,6 @@ export default function ContactPage() {
                       <div className="space-y-2">
                         <Label htmlFor="message">Message</Label>
                         <Textarea id="message" placeholder="Tell us about what you're looking for..." rows={6} value={formData.message} onChange={handleChange} />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="preferredContact">Preferred Contact Method</Label>
-                        <select
-                          id="preferredContact"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                          value={formData.preferredContact}
-                          onChange={handleChange}
-                        >
-                          <option value="">Select an option</option>
-                          <option value="email">Email</option>
-                          <option value="phone">Phone</option>
-                          <option value="text">Text Message</option>
-                        </select>
                       </div>
 
                       <Button type="submit" size="lg" className="w-full" disabled={status === "Sending..."}>

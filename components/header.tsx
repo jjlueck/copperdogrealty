@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 export function Header() {
   return (
@@ -8,7 +9,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/images/CopperDog_icon-solid.svg"
+            src="/images/CopperDog_icon-solid.png"
             alt="Copper Dog Realty"
             width={23}
             height={23}
@@ -41,9 +42,33 @@ export function Header() {
           </Button>
         </nav>
 
-        <Button variant="outline" className="md:hidden bg-transparent">
-          Menu
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="md:hidden bg-transparent">
+              Menu
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-xs">
+            <DialogTitle className="sr-only">Main Menu</DialogTitle>
+            <nav className="flex flex-col gap-4 p-4">
+              <Link href="/" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                Home
+              </Link>
+              <Link href="/properties" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                Available Homes
+              </Link>
+              <Link href="/team" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                Our Team
+              </Link>
+              <Link href="/about" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
+                About
+              </Link>
+              <Button asChild>
+                <Link href="/contact">Get in Touch</Link>
+              </Button>
+            </nav>
+          </DialogContent>
+        </Dialog>
       </div>
     </header>
   )

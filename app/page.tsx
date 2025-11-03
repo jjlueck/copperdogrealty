@@ -38,7 +38,7 @@ export default function HomePage() {
               <div className="relative">
                 <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl">
                   <Image
-                    src="/images/placeholders/hero-home.jpg"
+                    src="/images/hero-home.jpg"
                     alt="Beautiful lakefront home in Iowa Great Lakes"
                     fill
                     className="object-cover"

@@ -15,7 +15,10 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/CopperDog_icon-solid.png",
   },
-}
+  openGraph: {
+    images: "/images/hero-home.jpg",
+  },
+};
 
 export default function RootLayout({
   children,

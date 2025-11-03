@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const resendPayload = {
       from: fromEmail,
       to: toEmail,
-      subject: `Copper Dog Realty Form Submission 🎉 from ${firstName} ${lastName}`,
+      subject: `Copper Dog Realty Form Submission from ${firstName} ${lastName}`,
       html: `
       <p><strong>Name:</strong> ${firstName} ${lastName}</p>
       <p><strong>Email:</strong> ${email}</p>

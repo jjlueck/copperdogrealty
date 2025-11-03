@@ -97,6 +97,7 @@ export default function TeamPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
                       <div className="sm:col-span-1">
                         <div className="relative aspect-square rounded-lg overflow-hidden">
+                          {/* Some funny math to pick 8 unique images for each dog team member */}
                           <Carousel images={dachshundImages.slice((member.id - 3) * 8, (member.id - 2) * 8)} width={300} height={300} />
                         </div>
                       </div>

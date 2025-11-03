@@ -56,7 +56,17 @@ const dachshundImages = [
   "/images/dogs/dog-4.jpg",
   "/images/dogs/dog-5.jpg",
   "/images/dogs/dog-6.jpg",
-]
+  "/images/dogs/dog-7.jpg",
+  "/images/dogs/dog-8.jpg",
+  "/images/dogs/dog-9.jpg",
+  "/images/dogs/dog-10.jpg",
+  "/images/dogs/dog-11.jpg",
+  "/images/dogs/dog-12.jpg",
+  "/images/dogs/dog-13.jpg",
+  "/images/dogs/dog-14.jpg",
+  "/images/dogs/dog-15.jpg",
+  "/images/dogs/dog-16.jpg",
+];
 
 export default function TeamPage() {
   return (
@@ -87,7 +97,7 @@ export default function TeamPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 p-6">
                       <div className="sm:col-span-1">
                         <div className="relative aspect-square rounded-lg overflow-hidden">
-                          <Carousel images={dachshundImages} width={300} height={300} />
+                          <Carousel images={dachshundImages.slice((member.id - 3) * 8, (member.id - 2) * 8)} width={300} height={300} />
                         </div>
                       </div>
                       <div className="sm:col-span-2">

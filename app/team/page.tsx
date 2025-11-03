@@ -10,8 +10,14 @@ const teamMembers = [
   {
     id: 1,
     name: "Beth Toliver",
-    role: "Founder & Lead Broker",
-    bio: "With 15 years of experience in the Iowa Great Lakes region, Beth founded Copper Dog Realty to bring a more personal, community-focused approach to real estate. She believes every home has a story and every family deserves to find their perfect match.",
+    role: "Owner | Broker, Copper Dog Realty, LLC",
+    bio: `Beth Toliver is the Owner and Broker of <strong>Copper Dog Realty</strong>, a boutique real estate brokerage proudly serving the Iowa Great Lakes region. With a genuine passion for helping people find the right place to call home, Beth brings a personal, client-focused approach to every transaction. Her dedication to integrity, communication, and community is at the core of Copper Dog Realty’s mission.
+          <br/>
+          <br/>
+          As a long-time resident of the Iowa Great Lakes area, Beth understands the unique character and charm that make this community special — from peaceful lakeside retreats to family homes and investment opportunities. She founded Copper Dog Realty to provide a professional yet welcoming real estate experience where every client feels valued and supported.
+          <br/>
+          <br/>
+          When she’s not working with clients or leading her team, Beth enjoys spending time in nature with her family and her two dachshunds, Neville and Dobby Dean — the inspiration behind the Copper Dog name.`,
     email: "beth@copperdogrealty.com",
     phone: "(555) 123-4567",
     image: "/images/beth.png",
@@ -20,8 +26,14 @@ const teamMembers = [
   {
     id: 2,
     name: "Jason Grinnen",
-    role: "Senior Real Estate Agent",
-    bio: "Jason's attention to detail and patient guidance have helped countless families navigate the home buying process. He treats every client like family and believes in building lasting relationships beyond the sale.",
+    role: "REALTOR® | Copper Dog Realty, LLC",
+    bio: `A Minnesota-born Okobojian, <strong>Jason Grinnen</strong> has proudly called the Iowa Great Lakes home since 2004. With over 20 years of real estate experience in the area, Jason brings unmatched expertise, local insight, and a genuine passion for helping clients achieve their real estate goals.
+          <br/> 
+          <br/>
+          Whether you’re buying, selling, or investing, Jason provides exceptional service backed by a worldwide network, innovative marketing strategies, and cutting-edge technology — all designed to make your property stand out in today’s fast-paced market. His deep understanding of market trends and dedication to his clients have earned him a reputation for trust, professionalism, and results.
+          <br/>
+          <br/>
+          When he’s not chasing your real estate dreams, Jason enjoys spending time with his husband, Brad, and their dog, Harper. Most mornings, you can find Jason and Harper at the Lakes Area Dog Park — their favorite way to start the day in beautiful Okoboji.`,
     email: "jason@copperdogrealty.com",
     phone: "(555) 123-4568",
     image: "/images/jason.jpg",
@@ -29,23 +41,35 @@ const teamMembers = [
   },
   {
     id: 3,
-    name: "Dogs that need homes. Homes that need dogs.",
-    role: "Real Estate Agent",
-    bio: "Emily's enthusiasm and local knowledge make her an invaluable resource for anyone looking to call the Iowa Great Lakes home. She's passionate about matching families with properties that truly fit their lifestyle.",
-    email: "bestdog@copperdogrealty.com",
-    phone: "(555) 123-4569",
-    image: "/images/dogs/team-3.jpg",
+    name: "Dobby Dean",
+    role: "Chief Morale Officer | Copper Dog Realty Mascot",
+    bio: `Meet Dobby Dean, one of Copper Dog Realty’s beloved dachshunds and our unofficial Chief Morale Officer. With his big personality and even bigger heart, Dobby keeps the office smiling and reminds us all to enjoy the little moments — whether it’s a sunny walk, a good nap, or greeting clients with a wagging tail.
+          <br/> 
+          <br/>
+          Known for his curious nature and confident strut, Dobby Dean takes his role seriously (especially when treats are involved). He embodies the spirit of Copper Dog Realty — loyal, warm, and full of personality.
+          <br/>
+          <br/>
+          When he’s not keeping an eye on things around the office, you’ll find Dobby exploring the outdoors with his family and his brother, Neville.`,
+    email: "dobby.dean@copperdogrealty.com",
+    phone: "(555) 123-4570",
+    image: "/images/dogs/team-4.jpg",
     specialties: ["Eating", "Naps", "Cuddles"],
   },
   {
     id: 4,
-    name: "Wheeeeeeee!",
-    role: "Commercial Real Estate Specialist",
-    bio: "No comment",
-    email: "webmaster@copperdogrealty.com",
-    phone: "(555) 123-4570",
-    image: "/images/dogs/team-4.jpg",
-    specialties: ["Being Enthusiastic"],
+    name: "Neville",
+    role: "Head of Security | Copper Dog Realty Mascot",
+    bio: `Meet <strong>Neville</strong>, Copper Dog Realty’s dignified dachshund and Head of Security. Calm, observant, and always on duty, Neville keeps a close watch on the office and makes sure everything — and everyone — is right where it should be. His loyal nature and steady presence make him the perfect counterpart to his brother, Dobby Dean.
+          <br/> 
+          <br/>
+          While Neville takes his responsibilities seriously, he’s also known for his gentle side. He’s happiest when spending time with his family, enjoying quiet moments in nature, or basking in a sunny spot after a long day of “work.”
+          <br/>
+          <br/>
+          Neville embodies the heart of Copper Dog Realty — loyal, dependable, and always ready to make you feel at home.`,
+    email: "neville@copperdogrealty.com",
+    phone: "(555) 123-4569",
+    image: "/images/dogs/team-3.jpg",
+    specialties: ["Being enthusiastc", "Looking adorable"],
   },
 ]
 
@@ -104,7 +128,7 @@ export default function TeamPage() {
                       <div className="sm:col-span-2">
                         <h3 className="text-2xl font-bold text-foreground mb-1">{member.name}</h3>
                         <p className="text-primary font-medium mb-4">{member.role}</p>
-                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{member.bio}</p>
+                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: member.bio }} />
                         <div className="mb-4">
                           <p className="text-xs font-semibold text-foreground mb-2">Specialties:</p>
                           <div className="flex flex-wrap gap-2">
@@ -155,7 +179,7 @@ export default function TeamPage() {
                         <h3 className="text-2xl font-bold text-foreground mb-1">{member.name}</h3>
                         <p className="text-primary font-medium mb-4">{member.role}</p>
 
-                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{member.bio}</p>
+                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: member.bio }} />
 
                         <div className="mb-4">
                           <p className="text-xs font-semibold text-foreground mb-2">Specialties:</p>

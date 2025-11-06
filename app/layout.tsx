@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   openGraph: {
     images: "/images/hero-home.jpg",
   },
+  other: {
+    "google-site-verification": "XNl8Dsh7BcMDKeP_PFnSkdJBFmocAKxJZPCyKK0IfFs",
+  },
 };
 
 export default function RootLayout({

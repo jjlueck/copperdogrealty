@@ -173,10 +173,10 @@ export default function ContactPage() {
                         <div>
                           <p className="font-medium text-foreground">Phone</p>
                           <a
-                            href="tel:+15551234567"
+                            href="tel:+17123304793"
                             className="text-sm text-muted-foreground hover:text-primary transition-colors"
                           >
-                            (555) 123-4567
+                            (712) 330-4793
                           </a>
                         </div>
                       </div>
@@ -203,9 +203,7 @@ export default function ContactPage() {
                         <div>
                           <p className="font-medium text-foreground">Location</p>
                           <p className="text-sm text-muted-foreground">
-                            Milford, Iowa
-                            <br />
-                            Iowa Great Lakes Region
+                            1715 Hill Ave, Suite 1<br />Spirit Lake, IA 51360   
                           </p>
                         </div>
                       </div>

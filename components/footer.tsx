@@ -49,15 +49,15 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4 text-foreground">Contact</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>Milford, Iowa</li>
+              <li>1715 Hill Ave, Suite 1<br/>Spirit Lake, Iowa 51360</li>
               <li className="pt-2">
-                <a href="mailto:beth@copperdogrealty.com" className="hover:text-primary transition-colors">
-                  beth@copperdogrealty.com
+                <a href="mailto:info@copperdogrealty.com" className="hover:text-primary transition-colors">
+                  info@copperdogrealty.com
                 </a>
               </li>
               <li>
-                <a href="tel:+15551234567" className="hover:text-primary transition-colors">
-                  (555) 123-4567
+                <a href="tel:+17123304793" className="hover:text-primary transition-colors">
+                  (712) 330-4793
                 </a>
               </li>
             </ul>

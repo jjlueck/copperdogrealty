@@ -70,7 +70,7 @@ const teamMembers = [
           <br/>
           When he’s not keeping an eye on things around the office, you’ll find Dobby exploring the outdoors with his family and his brother, Neville.`,
     email: "dobby.dean@copperdogrealty.com",
-    phone: "(555) 123-4570",
+    phone: "(712) 555-DEAN",
     image: "/images/dogs/team-4.jpg",
     specialties: ["Eating", "Naps", "Cuddles"],
   },
@@ -86,7 +86,7 @@ const teamMembers = [
           <br/>
           Neville embodies the heart of Copper Dog Realty — loyal, dependable, and always ready to make you feel at home.`,
     email: "neville@copperdogrealty.com",
-    phone: "(555) 123-4569",
+    phone: "(712) 555-NEVL",
     image: "/images/dogs/team-3.jpg",
     specialties: ["Being enthusiastc", "Looking adorable"],
   },

@@ -19,7 +19,7 @@ const teamMembers = [
           <br/>
           When she’s not working with clients or leading her team, Beth enjoys spending time in nature with her family and her two dachshunds, Neville and Dobby Dean — the inspiration behind the Copper Dog name.`,
     email: "beth@copperdogrealty.com",
-    phone: "(555) 123-4567",
+    phone: "(712) 330-4793",
     image: "/images/beth.png",
     specialties: ["Lakefront Properties", "First-Time Buyers", "Investment Properties"],
   },
@@ -37,6 +37,25 @@ const teamMembers = [
     email: "jason@copperdogrealty.com",
     phone: "(555) 123-4568",
     image: "/images/jason.jpg",
+    specialties: ["Residential Sales", "Relocation Services", "Market Analysis"],
+  },
+  {
+    id: 5,
+    name: "Jessica Stafford",
+    role: "REALTOR® | Copper Dog Realty, LLC",
+    bio: `Jessica began her real estate career in 2015 and has been a multimillion-dollar producer since her very first year. At Copper Dog Realty, she brings that same drive, expertise, and heart to every client relationship. Jessica’s favorite part of being a REALTOR® is partnering with buyers and sellers to help turn their real estate dreams into reality. She believes every transaction is more than a deal—it’s a journey worth doing together.
+          <br/>
+          <br/>
+          Known for her proactive communication, Jessica works tirelessly to keep clients informed and supported every step of the way. She anticipates challenges before they arise, creating a smooth and stress-free experience that sets her apart in a competitive market.
+          <br/>
+          <br/>
+          For Jessica, there’s nothing more rewarding than handing over keys to a new home or delivering the final check at closing. Those moments are a reminder of why she loves what she does—helping people move confidently into their next chapter.
+          <br/>
+          <br/>
+          <strong>Jessica is proud to be part of the Copper Dog Realty family, where real estate is rooted in relationships, integrity, and local community.</strong>`,
+    email: "jessica@copperdogrealty.com",
+    phone: "(555) 123-4568",
+    image: "/images/jessica.jpg",
     specialties: ["Residential Sales", "Relocation Services", "Market Analysis"],
   },
   {

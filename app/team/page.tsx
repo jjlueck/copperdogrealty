@@ -35,7 +35,7 @@ const teamMembers = [
           <br/>
           When he’s not chasing your real estate dreams, Jason enjoys spending time with his husband, Brad, and their dog, Harper. Most mornings, you can find Jason and Harper at the Lakes Area Dog Park — their favorite way to start the day in beautiful Okoboji.`,
     email: "jason@copperdogrealty.com",
-    phone: "(555) 123-4568",
+    phone: "(712) 330-2112",
     image: "/images/jason.jpg",
     specialties: ["Residential Sales", "Relocation Services", "Market Analysis"],
   },
@@ -54,7 +54,7 @@ const teamMembers = [
           <br/>
           <strong>Jessica is proud to be part of the Copper Dog Realty family, where real estate is rooted in relationships, integrity, and local community.</strong>`,
     email: "jessica@copperdogrealty.com",
-    phone: "(555) 123-4568",
+    phone: "(712) 209-0710",
     image: "/images/jessica.jpg",
     specialties: ["Residential Sales", "Relocation Services", "Market Analysis"],
   },

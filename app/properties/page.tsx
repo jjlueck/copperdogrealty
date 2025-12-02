@@ -7,7 +7,8 @@ import Image from "next/image"
 import { Heart, MapPin, Bed, Bath, Square } from "lucide-react"
 import Link from "next/link"
 
-const properties = [
+const properties = [];
+/* Placeholder property data
   {
     id: 1,
     name: "Sunny Lakefront Retreat",
@@ -87,6 +88,7 @@ const properties = [
     image: "/images/placeholders/property-6.jpg",
   },
 ]
+*/
 
 export default function PropertiesPage() {
   return (

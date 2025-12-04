@@ -1,3 +1,5 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -6,91 +8,56 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { Heart, MapPin, Bed, Bath, Square } from "lucide-react"
 import Link from "next/link"
-
-const properties = [];
-/* Placeholder property data
-  {
-    id: 1,
-    name: "Sunny Lakefront Retreat",
-    price: 425000,
-    beds: 3,
-    baths: 2,
-    sqft: 1850,
-    location: "West Okoboji Lake",
-    status: "New Listing",
-    description:
-      "This cheerful home has been waiting patiently for the right family. With stunning lake views and a warm, welcoming interior, it's ready to create countless memories.",
-    image: "/images/placeholders/property-1.jpg",
-  },
-  {
-    id: 2,
-    name: "Cozy Downtown Charmer",
-    price: 285000,
-    beds: 2,
-    baths: 1.5,
-    sqft: 1200,
-    location: "Downtown Milford",
-    status: "Available",
-    description:
-      "A loyal companion of a home in the heart of Milford. This sweet property is eager to welcome a family who will appreciate its character and charm.",
-    image: "/images/placeholders/property-2.jpg",
-  },
-  {
-    id: 3,
-    name: "Spacious Family Haven",
-    price: 565000,
-    beds: 4,
-    baths: 3,
-    sqft: 2800,
-    location: "Spirit Lake",
-    status: "New Listing",
-    description:
-      "Like a gentle giant, this home has plenty of room for a growing family. Patient and dependable, it's been waiting for the perfect match.",
-    image: "/images/placeholders/property-3.jpg",
-  },
-  {
-    id: 4,
-    name: "Modern Waterfront Gem",
-    price: 725000,
-    beds: 3,
-    baths: 2.5,
-    sqft: 2200,
-    location: "East Okoboji Lake",
-    status: "Available",
-    description:
-      "Sleek and sophisticated, this home is ready to impress. With modern amenities and breathtaking views, it's the perfect forever home.",
-    image: "/images/placeholders/property-4.jpg",
-  },
-  {
-    id: 5,
-    name: "Rustic Countryside Estate",
-    price: 395000,
-    beds: 3,
-    baths: 2,
-    sqft: 2100,
-    location: "Rural Milford",
-    status: "Available",
-    description:
-      "This home loves the outdoors! Set on spacious grounds, it's perfect for families who enjoy nature and wide-open spaces.",
-    image: "/images/placeholders/property-5.jpg",
-  },
-  {
-    id: 6,
-    name: "Elegant Victorian Beauty",
-    price: 485000,
-    beds: 4,
-    baths: 2.5,
-    sqft: 2400,
-    location: "Historic Milford",
-    status: "Available",
-    description:
-      "A distinguished home with timeless appeal. This property has been lovingly maintained and is ready to continue its legacy with a new family.",
-    image: "/images/placeholders/property-6.jpg",
-  },
-]
-*/
+import { useEffect, useState } from "react"
 
 export default function PropertiesPage() {
+  const [properties, setProperties] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await fetch("/api/properties")
+        if (!response.ok) {
+          throw new Error("Failed to fetch properties")
+        }
+        const data = await response.json()
+        setProperties(data)
+      } catch (err: any) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProperties()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <p>Loading properties...</p>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <p>Error: {error}</p>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -115,17 +82,17 @@ export default function PropertiesPage() {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((property) => (
-                <Card key={property.id} className="overflow-hidden hover:shadow-xl transition-all group">
+              {properties.map((property, index) => (
+                <Card key={property.ListingKey || index} className="overflow-hidden hover:shadow-xl transition-all group">
                   <div className="relative aspect-[4/3]">
                     <Image
-                      src={property.image || "/placeholder.svg"}
-                      alt={property.name}
+                      src={`/images/placeholders/property-${(index % 6) + 1}.jpg`}
+                      alt={property.StreetName || "Property Image"}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                      <Badge className="bg-primary text-primary-foreground">{property.status}</Badge>
+                      <Badge className="bg-primary text-primary-foreground">{property.MlsStatus}</Badge>
                       <button className="w-10 h-10 bg-background/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-background transition-colors">
                         <Heart className="w-5 h-5 text-foreground" />
                       </button>
@@ -134,35 +101,41 @@ export default function PropertiesPage() {
 
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-semibold text-xl text-foreground">{property.name}</h3>
+                      <h3 className="font-semibold text-xl text-foreground">
+                        {property.StreetNumber} {property.StreetName} {property.StreetSuffix}
+                      </h3>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                       <MapPin className="w-4 h-4" />
-                      <span>{property.location}</span>
+                      <span>{property.City}</span>
                     </div>
 
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 pb-4 border-b border-border">
                       <div className="flex items-center gap-1">
                         <Bed className="w-4 h-4" />
-                        <span>{property.beds} bed</span>
+                        <span>{property.BedroomsTotal} bed</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Bath className="w-4 h-4" />
-                        <span>{property.baths} bath</span>
+                        <span>{property.BathroomsTotalInteger} bath</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Square className="w-4 h-4" />
-                        <span>{property.sqft.toLocaleString()} sq ft</span>
+                        <span>{Number(property.LivingArea).toLocaleString()} sq ft</span>
                       </div>
                     </div>
 
                     <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-3">
-                      {property.description}
+                      {property.PublicRemarks}
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-primary">${property.price.toLocaleString()}</span>
+                      <span className="text-2xl font-bold text-primary">
+                        {property.ListPrice
+                          ? `$${Number(property.ListPrice).toLocaleString()}`
+                          : "Price upon request"}
+                      </span>
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>

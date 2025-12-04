@@ -43,15 +43,15 @@ export default function ContactPage() {
 
       if (response.ok) {
         setStatus("Message sent successfully!")
-        setFormData({ // Clear form after successful submission
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          interest: "",
-          message: "",
-        })
-      } else {
+                setFormData({
+                  firstName: "",
+                  lastName: "",
+                  email: "",
+                  phone: "",
+                  interest: "",
+                  message: "",
+                  preferredContact: "",
+                })      } else {
         setStatus(`Failed to send message: ${data.message || "Unknown error"}`)
       }
     } catch (error) {

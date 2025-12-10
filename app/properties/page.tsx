@@ -83,16 +83,20 @@ export default function PropertiesPage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {properties.map((property, index) => (
-                <Card key={property.ListingKey || index} className="overflow-hidden hover:shadow-xl transition-all group">
+                <Card key={property.ListingKey || property.ListingID || index} className="overflow-hidden hover:shadow-xl transition-all group">
                   <div className="relative aspect-[4/3]">
                     <Image
-                      src={`/images/placeholders/property-${(index % 6) + 1}.jpg`}
-                      alt={property.StreetName || "Property Image"}
+                      src={
+                        property.photos && property.photos.length > 0
+                          ? property.photos[0]
+                          : `/images/placeholders/property-${(index % 6) + 1}.jpg`
+                      }
+                      alt={property.StreetName || property.L_AddressStreet || "Property Image"}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                      <Badge className="bg-primary text-primary-foreground">{property.MlsStatus}</Badge>
+                      <Badge className="bg-primary text-primary-foreground">{property.MlsStatus || property.L_Status || "Active"}</Badge>
                       <button className="w-10 h-10 bg-background/90 backdrop-blur rounded-full flex items-center justify-center hover:bg-background transition-colors">
                         <Heart className="w-5 h-5 text-foreground" />
                       </button>
@@ -102,38 +106,39 @@ export default function PropertiesPage() {
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-semibold text-xl text-foreground">
-                        {property.StreetNumber} {property.StreetName} {property.StreetSuffix}
+                        {property.StreetNumber || property.L_AddressNumber} {property.StreetName || property.L_AddressStreet} {property.StreetSuffix || ""}
+                        {!property.StreetNumber && !property.StreetName && (property.L_Address || "Address Unavailable")}
                       </h3>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
                       <MapPin className="w-4 h-4" />
-                      <span>{property.City}</span>
+                      <span>{property.City || property.L_City}</span>
                     </div>
 
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4 pb-4 border-b border-border">
                       <div className="flex items-center gap-1">
                         <Bed className="w-4 h-4" />
-                        <span>{property.BedroomsTotal} bed</span>
+                        <span>{property.BedroomsTotal || property.Beds || "?"} bed</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Bath className="w-4 h-4" />
-                        <span>{property.BathroomsTotalInteger} bath</span>
+                        <span>{property.BathroomsTotalInteger || property.Baths || "?"} bath</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Square className="w-4 h-4" />
-                        <span>{Number(property.LivingArea).toLocaleString()} sq ft</span>
+                        <span>{property.LivingArea ? Number(property.LivingArea).toLocaleString() : property.SqFt || "?"} sq ft</span>
                       </div>
                     </div>
 
                     <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-3">
-                      {property.PublicRemarks}
+                      {property.PublicRemarks || property.L_Remarks || "No remarks available."}
                     </p>
 
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-bold text-primary">
-                        {property.ListPrice
-                          ? `$${Number(property.ListPrice).toLocaleString()}`
+                        {(property.ListPrice || property.L_AskingPrice)
+                          ? `$${Number(property.ListPrice || property.L_AskingPrice).toLocaleString()}`
                           : "Price upon request"}
                       </span>
                       <Button variant="outline" size="sm">

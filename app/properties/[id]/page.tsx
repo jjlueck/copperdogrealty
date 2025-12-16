@@ -1,0 +1,336 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import Image from "next/image"
+import Link from "next/link"
+import { 
+  MapPin, Bed, Bath, Square, Calendar, 
+  Home, DollarSign, Info, Phone, Mail, 
+  ChevronLeft, ChevronRight, Check
+} from "lucide-react"
+
+// Define the detailed Listing type based on fields_summary.txt
+interface ListingDetail {
+  L_ListingID?: string;
+  L_DisplayId?: string;
+  
+  // Address
+  L_AddressNumber?: string;
+  L_AddressStreet?: string;
+  L_City?: string;
+  L_State?: string;
+  L_Zip?: string;
+  L_Address?: string;
+
+  // Price & Status
+  L_AskingPrice?: string;
+  L_Status?: string;
+  L_StatusCatID?: string;
+  L_Class?: string;
+  L_Type_?: string;
+  
+  // Key Stats
+  LM_Int1_11?: string; // Total Beds
+  LM_Dec_35?: string;  // Total Baths
+  LM_Int2_4?: string;  // SqFt (Living Area)
+  LM_Int2_13?: string; // Year Built
+  
+  // Descriptions
+  LR_remarks3636?: string; // Marketing Remarks
+  LR_remarks5050?: string; // Other Remarks
+
+  // Features (LFD_)
+  LFD_ArchitecturalStyle_5002?: string;
+  LFD_BasementMaterial_5005?: string;
+  LFD_BasementStyle_5006?: string;
+  LFD_ConstructionMaterials_5013?: string;
+  LFD_Heating_5027?: string;
+  LFD_Sewer_5040?: string;
+  LFD_WaterSource_5043?: string;
+  LFD_GarageType_5022?: string;
+  LFD_Levels_5030?: string;
+
+  // Agent/Office
+  LA1_UserFirstName?: string;
+  LA1_UserLastName?: string;
+  LA1_PhoneNumber1?: string;
+  LA1_Email?: string;
+  LO1_OrganizationName?: string;
+  LO1_PhoneNumber1?: string;
+  L_AttributionContact?: string;
+
+  photos?: string[];
+}
+
+export default function PropertyDetailsPage() {
+  const params = useParams();
+  const id = params.id as string;
+
+  const [listing, setListing] = useState<ListingDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+        const response = await fetch(`/api/properties/${id}`);
+        if (!response.ok) {
+          if (response.status === 404) throw new Error("Property not found");
+          throw new Error("Failed to load property details");
+        }
+        const data = await response.json();
+        setListing(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchListing();
+  }, [id]);
+
+  const nextPhoto = () => {
+    if (!listing?.photos) return;
+    setActivePhotoIndex((prev) => (prev + 1) % listing.photos!.length);
+  };
+
+  const prevPhoto = () => {
+    if (!listing?.photos) return;
+    setActivePhotoIndex((prev) => (prev - 1 + listing.photos!.length) % listing.photos!.length);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p className="text-muted-foreground">Loading property details...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !listing) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex flex-col items-center justify-center p-4">
+          <h1 className="text-2xl font-bold text-foreground mb-2">Oops!</h1>
+          <p className="text-muted-foreground mb-4">{error || "We couldn't find that property."}</p>
+          <Button asChild>
+            <Link href="/properties">Back to Listings</Link>
+          </Button>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Helpers
+  const getVal = (val?: string) => val || "N/A";
+  const formatPrice = (price?: string) => price ? `$${Number(price).toLocaleString()}` : "Price Upon Request";
+  const address = `${listing.L_AddressNumber || ""} ${listing.L_AddressStreet || ""}`.trim() || listing.L_Address || "Address Unavailable";
+  const cityStateZip = `${listing.L_City || ""}, ${listing.L_State || ""} ${listing.L_Zip || ""}`.trim();
+
+  const features = [
+    { label: "Year Built", value: listing.LM_Int2_13, icon: Calendar },
+    { label: "Style", value: listing.LFD_ArchitecturalStyle_5002, icon: Home },
+    { label: "Construction", value: listing.LFD_ConstructionMaterials_5013, icon: Home },
+    { label: "Levels", value: listing.LFD_Levels_5030, icon: Home },
+    { label: "Garage", value: listing.LFD_GarageType_5022, icon: Home },
+    { label: "Heating", value: listing.LFD_Heating_5027, icon: Info },
+    { label: "Water", value: listing.LFD_WaterSource_5043, icon: Info },
+    { label: "Sewer", value: listing.LFD_Sewer_5040, icon: Info },
+  ].filter(f => f.value && f.value !== "Other" && f.value !== "None");
+
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      <Header />
+
+      <main className="flex-1 pb-16">
+        {/* Gallery Hero */}
+        <section className="bg-black relative h-[50vh] md:h-[60vh] lg:h-[70vh]">
+          {listing.photos && listing.photos.length > 0 ? (
+            <>
+              <Image 
+                src={listing.photos[activePhotoIndex]} 
+                alt={`Photo ${activePhotoIndex + 1}`}
+                fill
+                className="object-contain"
+                priority
+              />
+              <div className="absolute inset-0 flex items-center justify-between p-4">
+                <Button variant="ghost" size="icon" onClick={prevPhoto} className="bg-black/20 hover:bg-black/40 text-white rounded-full">
+                  <ChevronLeft className="w-8 h-8" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={nextPhoto} className="bg-black/20 hover:bg-black/40 text-white rounded-full">
+                  <ChevronRight className="w-8 h-8" />
+                </Button>
+              </div>
+              <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                {activePhotoIndex + 1} / {listing.photos.length}
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full text-white/50">No Images Available</div>
+          )}
+        </section>
+
+        <div className="container mx-auto px-4 -mt-12 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-8">
+              
+              {/* Header Card */}
+              <Card className="shadow-lg border-0 overflow-hidden">
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                      <h1 className="text-3xl font-bold text-foreground mb-2">{address}</h1>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="w-4 h-4" />
+                        <span>{cityStateZip}</span>
+                      </div>
+                    </div>
+                    <div className="text-left md:text-right">
+                      <div className="text-3xl font-bold text-primary mb-1">
+                        {formatPrice(listing.L_AskingPrice)}
+                      </div>
+                      <Badge variant="outline" className="text-sm px-3 py-1">
+                        {listing.L_Status || "Active"}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <Separator className="my-6" />
+
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div className="flex flex-col items-center justify-center p-3 bg-muted/30 rounded-lg">
+                      <Bed className="w-6 h-6 text-primary mb-2" />
+                      <span className="text-2xl font-bold">{getVal(listing.LM_Int1_11)}</span>
+                      <span className="text-xs uppercase text-muted-foreground font-semibold">Beds</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-3 bg-muted/30 rounded-lg">
+                      <Bath className="w-6 h-6 text-primary mb-2" />
+                      <span className="text-2xl font-bold">{getVal(listing.LM_Dec_35)}</span>
+                      <span className="text-xs uppercase text-muted-foreground font-semibold">Baths</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-3 bg-muted/30 rounded-lg">
+                      <Square className="w-6 h-6 text-primary mb-2" />
+                      <span className="text-2xl font-bold">
+                        {listing.LM_Int2_4 ? Number(listing.LM_Int2_4).toLocaleString() : "N/A"}
+                      </span>
+                      <span className="text-xs uppercase text-muted-foreground font-semibold">Sq Ft</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Description */}
+              <Card className="shadow-sm border-border/60">
+                <CardContent className="p-6 md:p-8">
+                  <h2 className="text-xl font-bold mb-4">About This Home</h2>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {listing.LR_remarks3636 || "No description available."}
+                  </p>
+                  {listing.LR_remarks5050 && (
+                    <p className="text-muted-foreground leading-relaxed mt-4 italic text-sm border-t pt-4">
+                      {listing.LR_remarks5050}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Features */}
+              {features.length > 0 && (
+                <Card className="shadow-sm border-border/60">
+                  <CardContent className="p-6 md:p-8">
+                    <h2 className="text-xl font-bold mb-6">Property Features</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {features.map((feature, idx) => (
+                        <div key={idx} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                          <feature.icon className="w-5 h-5 text-primary/70" />
+                          <div>
+                            <p className="text-xs text-muted-foreground uppercase font-semibold">{feature.label}</p>
+                            <p className="font-medium">{feature.value}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+            </div>
+
+            {/* Sidebar / Contact */}
+            <div className="space-y-6">
+              <Card className="shadow-lg border-0 sticky top-24">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-lg mb-4">Listing Agent</h3>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-xl">👤</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold">{listing.LA1_UserFirstName} {listing.LA1_UserLastName}</p>
+                      <p className="text-sm text-muted-foreground">{listing.LO1_OrganizationName}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 mb-6">
+                    {listing.LA1_PhoneNumber1 && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <Phone className="w-4 h-4 text-primary" />
+                        <a href={`tel:${listing.LA1_PhoneNumber1}`} className="hover:text-primary">{listing.LA1_PhoneNumber1}</a>
+                      </div>
+                    )}
+                    {listing.LA1_Email && (
+                      <div className="flex items-center gap-3 text-sm">
+                        <Mail className="w-4 h-4 text-primary" />
+                        <a href={`mailto:${listing.LA1_Email}`} className="hover:text-primary truncate">{listing.LA1_Email}</a>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button className="w-full mb-3" size="lg" asChild>
+                    <Link href="/contact">Schedule a Showing</Link>
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/contact">Ask a Question</Link>
+                  </Button>
+
+                  <div className="mt-8 pt-6 border-t border-border text-xs text-muted-foreground">
+                    <p className="font-semibold mb-1">Listing Provided By:</p>
+                    <p>{listing.LO1_OrganizationName}</p>
+                    <p>{listing.L_AttributionContact}</p>
+                    <p className="mt-2 opacity-70">
+                      Information is deemed reliable but not guaranteed.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  )
+}

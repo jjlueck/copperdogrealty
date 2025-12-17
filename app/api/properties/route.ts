@@ -23,8 +23,7 @@ export async function GET(request: NextRequest) {
   const client = new RetsClient({ loginUrl, username, password });
 
   try {
-    await client.login();
-    
+    // Login is now handled within the cached searchProperties function
     const listings = await client.searchProperties({
       minPrice,
       maxPrice,
@@ -34,8 +33,7 @@ export async function GET(request: NextRequest) {
       limit
     });
 
-    await client.logout();
-
+    // Logout is also handled within the cached function
     return NextResponse.json(listings);
   } catch (error: any) {
     console.error('API Error:', error.message);

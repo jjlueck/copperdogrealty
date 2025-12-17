@@ -1,7 +1,12 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import { RetsClient, PropertyFilter } from './rets-client';
 import path from 'path';
 import dotenv from 'dotenv';
+
+// Mock next/cache
+vi.mock('next/cache', () => ({
+  unstable_cache: (fn: Function) => fn, // Simply return the function (or a wrapped version that calls it)
+}));
 
 // Load .env from project root for integration tests
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -76,11 +81,10 @@ describe('RetsClient Integration Tests', () => {
     password: process.env.RETS_PASSWORD!
   };
 
-  it('should login, search, and logout successfully', async () => {
+  it('should search successfully using internal login/logout', async () => {
     const client = new RetsClient(config);
     
-    await expect(client.login()).resolves.not.toThrow();
-
+    // searchProperties now handles login/logout internally
     const listings = await client.searchProperties({ limit: 2 });
     
     expect(Array.isArray(listings)).toBe(true);
@@ -90,8 +94,11 @@ describe('RetsClient Integration Tests', () => {
       expect(first).toHaveProperty('L_ListingID');
       expect(first).toHaveProperty('photos');
       expect(Array.isArray(first.photos)).toBe(true);
-    }
 
-    await expect(client.logout()).resolves.not.toThrow();
+      // Test getListingDetails for the found ID
+      const detail = await client.getListingDetails(first.L_ListingID);
+      expect(detail).not.toBeNull();
+      expect(detail).toHaveProperty('L_ListingID', first.L_ListingID);
+    }
   }, 30000); // 30s timeout for network calls
 });

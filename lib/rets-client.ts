@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
+import { unstable_cache } from 'next/cache';
 
 export interface RetsConfig {
   loginUrl: string;
@@ -19,14 +20,15 @@ export interface PropertyFilter {
 
 export class RetsClient {
   private client: AxiosInstance;
+  private jar: CookieJar;
   private config: RetsConfig;
   private capabilityUrls: Record<string, string> = {};
 
   constructor(config: RetsConfig) {
     this.config = config;
-    const jar = new CookieJar();
+    this.jar = new CookieJar();
     this.client = wrapper(axios.create({
-      jar,
+      jar: this.jar,
       withCredentials: true,
       headers: {
         'User-Agent': 'RETS-Connector/1.2',
@@ -66,6 +68,7 @@ export class RetsClient {
         auth: { username: this.config.username, password: this.config.password },
       });
     }
+    this.jar.removeAllCookiesSync();
   }
 
   private parseCompact(xml: string): any[] {
@@ -111,14 +114,18 @@ export class RetsClient {
       criteria.push(`(LM_Dec_35=${filters.minBaths}+)`);
     }
 
+
     return criteria.join(',');
   }
 
-  async searchProperties(filters: PropertyFilter = {}): Promise<any[]> {
+  // --- Public Methods to be used by API Routes ---
+
+  // Original searchProperties logic, but made private and to be wrapped by cache
+  private async _searchProperties(filters: PropertyFilter = {}): Promise<any[]> {
     if (!this.capabilityUrls['Search']) throw new Error('Not logged in or no Search capability');
 
     const query = this.buildDmqlQuery(filters);
-    console.log(`Searching properties with query: ${query}`);
+    console.log(`[RETS] Searching properties with query: ${query}`);
 
     const searchUrl = this.resolveUrl(this.capabilityUrls['Search']);
     const response = await this.client.get(searchUrl, {
@@ -147,13 +154,38 @@ export class RetsClient {
     return listingsWithPhotos;
   }
 
-  async getListingDetails(listingId: string): Promise<any | null> {
+  // Cached version of searchProperties
+  public async searchProperties(filters: PropertyFilter = {}): Promise<any[]> {
+    // Generate a consistent cache key from filters
+    const filterKey = JSON.stringify(filters); 
+    
+    // unstable_cache expects a function that takes arguments that form part of the cache key
+    const cachedFn = unstable_cache(
+      async (keyFilters: string) => { // keyFilters is the stringified filters
+        const parsedFilters = JSON.parse(keyFilters);
+        // Ensure login happens inside the cached function's execution context
+        await this.login(); 
+        const result = await this._searchProperties(parsedFilters);
+        await this.logout();
+        return result;
+      },
+      [`properties-search-${filterKey}`], // Dynamic cache key including filters
+      {
+        revalidate: 43200, // Revalidate every 12 hours (60 seconds * 60 minutes * 12 hours)
+        tags: ['properties'], // Tag for on-demand revalidation
+      }
+    );
+
+    return cachedFn(filterKey);
+  }
+
+  private async _getListingDetails(listingId: string): Promise<any | null> {
     if (!this.capabilityUrls['Search']) throw new Error('Not logged in or no Search capability');
 
     // Query for exact Listing ID. 
     // Note: Use SystemName 'L_ListingID' as it is reliable for search.
     const query = `(L_ListingID=${listingId})`;
-    console.log(`Fetching details for listing ${listingId} with query: ${query}`);
+    console.log(`[RETS] Fetching details for listing ${listingId} with query: ${query}`);
 
     const searchUrl = this.resolveUrl(this.capabilityUrls['Search']);
     const response = await this.client.get(searchUrl, {
@@ -177,6 +209,24 @@ export class RetsClient {
     const photos = await this.fetchPhotos(listingId);
     
     return { ...listing, photos };
+  }
+
+  public async getListingDetails(listingId: string): Promise<any | null> {
+    const cachedFn = unstable_cache(
+      async (id: string) => {
+        await this.login();
+        const result = await this._getListingDetails(id);
+        await this.logout();
+        return result;
+      },
+      [`property-details-${listingId}`],
+      {
+        revalidate: 43200,
+        tags: ['properties', `property-${listingId}`],
+      }
+    );
+
+    return cachedFn(listingId);
   }
 
   async fetchPhotos(listingId: string): Promise<string[]> {

@@ -1,0 +1,138 @@
+Summary of Non-Empty Fields from RETS Listing:
+==============================================
+
+Field Name | Content
+--- | ---
+LA1_Address2: PO Box 449
+LA1_AddressStreet: 2916 US Hwy 71 S.
+LA1_City: Spirit Lake
+LA1_Email: kathydeterman1@gmail.com
+LA1_HiddenUsCID: Realtor (LIM)
+LA1_LoginName: KD-KWO
+LA1_PhoneNumber1: 712-260-2478
+LA1_PhoneNumber1CountryCodeId: United States (+1)
+LA1_PhoneNumber1Desc: PRIM
+LA1_PhoneNumber2: 712-260-2478
+LA1_PhoneNumber2CountryCodeId: United States (+1)
+LA1_PhoneNumber2Desc: CELL
+LA1_State: IA
+LA1_Status: MLS and BOARD
+LA1_UserFirstName: Kathy
+LA1_UserLastName: Determan
+LA1_WebPage: www.buyokoboji.com
+LA1_Zip: 51360
+LFD_ArchitecturalStyle_5002: Other
+LFD_BasementMaterial_5005: Other
+LFD_BasementStyle_5006: None
+LFD_ConstructionMaterials_5013: Wood Siding
+LFD_Construction_5012: Frame/Wood
+LFD_Fuel_5021: Natural Gas
+LFD_GarageType_5022: None
+LFD_Heating_5027: Forced Air
+LFD_Levels_5030: One
+LFD_LockBoxType_5031: None
+LFD_Mechanicals_5033: Water Heater-Elec
+LFD_Sewer_5040: Public Sewer
+LFD_WaterSource_5043: Public/City
+LMD_MP_Latitude: 43.392743
+LMD_MP_Longitude: -95.166485
+LMD_MP_MatchCode: 3
+LMD_MP_MatchedMethod: 1
+LMD_MP_Quality: 0.95
+LMD_MP_UpdateDate: 2020-09-29T22:39:13.8
+LMD_MP_ZoomLevel: 16
+LM_Char10_1: 18-714
+LM_Char10_4: West Okoboji Lake
+LM_Char1_1: Y
+LM_Char50_1: 20180523200056905780000000
+LM_Char50_2: 00001
+LM_Dec_2: 0
+LM_Dec_32: 1
+LM_Dec_33: 0
+LM_Dec_35: 2
+LM_Dec_66: 0
+LM_Int1_11: 1
+LM_Int1_18: 0
+LM_Int1_19: 0
+LM_Int1_8: 0
+LM_Int1_9: 2
+LM_Int2_11: 2016
+LM_Int2_13: 1989
+LM_Int2_4: 855
+LM_Int2_5: 855
+LM_Int2_6: 855
+LM_Int2_7: 855
+LM_Int4_6: 0
+LM_bit_53: 0
+LM_bit_54: 0
+LM_bit_58: 0
+LM_bit_69: 1
+LM_char100_7: ROLLINGER, TIMOTHY JAMES &amp; BETH ANN
+LM_char10_53: Spirit Lake
+LM_char50_14: Call Agent to show 712-260-2478
+LM_char50_16: none
+LM_char50_18: Shared
+LM_char50_23: 19990816212109142258000000
+LM_char5_14: Unknown
+LM_char5_20: Unknown
+LM_char5_21: Partial
+LM_char5_27: Exclusive Right To Sell
+LM_char5_28: Other
+LM_char5_29: Other
+LM_char5_33: Seasonal Recreational
+LO1_BranchOfOrgID: 1758
+LO1_EMail: robhinn@yahoo.com
+LO1_HiddenOrgID: 1758
+LO1_HiddenOtyID: Realtor Office
+LO1_OrgAddress2: PO Box 449
+LO1_OrgAddressStreet: 2916 Hwy 71 S
+LO1_OrgCity: Spirit Lake
+LO1_OrgState: IA
+LO1_OrgZip: 51360
+LO1_OrganizationName: Hinn Real Estate
+LO1_PhoneNumber1: 712-336-1240
+LO1_ShortName: HINN
+LO1_WebPage: https://www.buyokoboji.com/
+LR_remarks11: Hwy 86 to Village West
+LR_remarks3636: Your Okoboji Getaway in May!! Spend an entire week in this comfortable 2 Bedroom 2 Bath Townhouse complete with full Kitchen, Living/Dining room &amp; Large Deck overlooking beautiful West Lake. Resort amenities include indoor/outdoor pools, movie theater, exercise room, game room &amp; much more.
+LR_remarks5050: A fixed week Timeshare Unit 7G Week 20 Sunrise Cove, Village West, DCI. Or exact legal per Warranty Deed.
+LV_vow_address: Yes
+LV_vow_avm: Yes
+LV_vow_comment: Yes
+LV_vow_include: Yes
+L_Address: Week 20 Unit 7G Sunrise Cove
+L_AddressNumber: Week 20
+L_AddressSearchNumber: 20
+L_AddressStreet: Unit 7G Sunrise Cove
+L_Area: Dickinson
+L_AskingPrice: 9000
+L_AttributionContact: PRIM: 712-260-2478
+L_City: Spirit Lake
+L_Class: RESIDENTIAL
+L_DOM: 2757
+L_DisplayId: 180714
+L_FirstPhotoAddDt: 2020-10-08T22:55:06.7
+L_HotSheetDate: 2025-05-06
+L_IdxInclude: Yes
+L_InputDate: 2018-05-23T15:13:15
+L_Last_Photo_updt: 2022-07-22T13:47:50.9
+L_ListAgent1: 7845
+L_ListOffice1: 1758
+L_ListingDate: 2018-05-23
+L_ListingID: 180714
+L_ListingsOffMarketStatusDate: 2025-05-06
+L_OriginalPrice: 9000
+L_PictureCount: 16
+L_PriceDate: 2020-08-12
+L_PricePerSQFT: 10.53
+L_SaleRent: For Sale
+L_State: IA
+L_Status: Active
+L_StatusCatID: Active
+L_StatusDate: 2025-05-06
+L_StatusID: 0
+L_SystemPrice: 9000
+L_Type_: Timeshare
+L_UpdateDate: 2025-05-06T17:29:38.7
+L_Zip: 51360
+L_listings_associated_doc_count: 0

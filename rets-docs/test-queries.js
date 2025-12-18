@@ -98,34 +98,44 @@ async function main() {
 
     const metadataUrl = resolveUrl(capabilityUrls['GetMetadata']);
 
-    // 2. Get Lookup Values for City_Lkp_1
-    console.log(`Fetching Lookup Values for City_Lkp_1...`);
-    const lookupResponse = await client.get(metadataUrl, {
-        params: { Type: 'METADATA-LOOKUP_TYPE', ID: 'Property:City_Lkp_1', Format: 'COMPACT' },
-        auth: { username, password }
+    // 2. Search Properties (Recent Listings)
+    const searchUrl = resolveUrl(searchPath);
+    console.log(`Searching properties at: ${searchUrl}`);
+    
+    // Calculate date 3 months ago
+    const date = new Date();
+    date.setMonth(date.getMonth() - 24); // Using 24 months ago just to be safe and ensure we get results for this test
+    const dateStr = date.toISOString().split('T')[0];
+    const query = `(L_StatusCatID=1),(L_ListingDate=${dateStr}+)`;
+
+    console.log(`Query: ${query}`);
+
+    const searchResponse = await client.get(searchUrl, {
+      params: {
+        SearchType: 'Property',
+        Class: 'RE_1',
+        Query: query,
+        QueryType: 'DMQL2',
+        Count: 1,
+        Format: 'COMPACT-DECODED',
+        Limit: 10,
+        StandardNames: 0 
+      },
+      auth: { username, password }
     });
 
-    const lookups = parseCompact(lookupResponse.data);
-    console.log(`Found ${lookups.length} lookup values.`);
+    const listings = parseCompact(searchResponse.data);
+    console.log(`Found ${listings.length} listings`);
     
-    const targetCities = ['spirit lake', 'okoboji', 'arnolds park', 'milford', 'lake park', 'wahpeton'];
-    
-    console.log('--- City Lookup Codes ---');
-    targetCities.forEach(city => {
-        const match = lookups.find(l => l.LongValue && l.LongValue.toLowerCase() === city);
-        if (match) {
-            console.log(`"${match.LongValue}" -> Code: "${match.Value}"`);
-        } else {
-            console.log(`"${city}" -> NOT FOUND`);
-        }
+    console.log('--- Listing Dates ---');
+    listings.forEach(l => {
+        console.log(`ID: ${l.L_ListingID}, Date: ${l.L_ListingDate}`);
     });
 
     /*
-    // 3. Test the failing City Query
+    // 3. Fetch Photos for each listing
     ...
     */
-
-    // 3. Fetch Photos for each listing
     const listingsWithPhotos = await Promise.all(listings.map(async (listing) => {
         // Handle both Standard and System names just in case
         const listingId = listing.ListingID || listing.L_ListingID || listing.L_DisplayId;

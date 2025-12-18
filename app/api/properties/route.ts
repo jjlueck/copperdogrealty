@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
   const minBeds = searchParams.get('minBeds') ? Number(searchParams.get('minBeds')) : undefined;
   const minBaths = searchParams.get('minBaths') ? Number(searchParams.get('minBaths')) : undefined;
   const limit = searchParams.get('limit') ? Number(searchParams.get('limit')) : 20;
+  const sort = searchParams.get('sort') as 'recent' | 'price_asc' | 'price_desc' | undefined;
 
   const client = new RetsClient({ loginUrl, username, password });
 
@@ -30,7 +31,8 @@ export async function GET(request: NextRequest) {
       city,
       minBeds,
       minBaths,
-      limit
+      limit,
+      sort
     });
 
     // Logout is also handled within the cached function

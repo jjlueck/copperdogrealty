@@ -10,148 +10,331 @@ export interface RetsConfig {
 }
 
 export interface PropertyFilter {
+
   minPrice?: number;
+
   maxPrice?: number;
+
   city?: string;
+
   minBeds?: number;
+
   minBaths?: number;
+
   limit?: number;
+
+  sort?: 'recent' | 'price_asc' | 'price_desc';
+
 }
 
+
+
 export class RetsClient {
+
   private client: AxiosInstance;
+
   private jar: CookieJar;
+
   private config: RetsConfig;
+
   private capabilityUrls: Record<string, string> = {};
 
+
+
   constructor(config: RetsConfig) {
+
     this.config = config;
+
     this.jar = new CookieJar();
+
     this.client = wrapper(axios.create({
+
       jar: this.jar,
+
       withCredentials: true,
+
       headers: {
+
         'User-Agent': 'RETS-Connector/1.2',
+
         'RETS-Version': 'RETS/1.7.2',
+
       },
+
     }));
+
   }
+
+
 
   private resolveUrl(path: string): string {
+
     if (path.startsWith('http')) return path;
+
     const u = new URL(this.config.loginUrl);
+
     return `${u.protocol}//${u.host}${path.startsWith('/') ? '' : '/'}${path}`;
+
   }
+
+
 
   async login(): Promise<void> {
+
     console.log(`Connecting to RETS Server: ${this.config.loginUrl}`);
+
     const response = await this.client.get(this.config.loginUrl, {
+
       auth: { username: this.config.username, password: this.config.password },
+
     });
+
+
 
     if (response.status !== 200) {
+
       throw new Error(`Login failed. Status: ${response.status}`);
+
     }
+
+
 
     const lines = response.data.split('\n');
+
     lines.forEach((line: string) => {
+
       const parts = line.split('=');
+
       if (parts.length >= 2) {
+
         this.capabilityUrls[parts[0].trim()] = parts.slice(1).join('=').trim();
+
       }
+
     });
+
   }
+
+
 
   async logout(): Promise<void> {
+
     if (this.capabilityUrls['Logout']) {
+
       await this.client.get(this.resolveUrl(this.capabilityUrls['Logout']), {
+
         auth: { username: this.config.username, password: this.config.password },
+
       });
+
     }
+
     this.jar.removeAllCookiesSync();
+
   }
+
+
 
   private parseCompact(xml: string): any[] {
+
     const results: any[] = [];
+
     const columnsMatch = xml.match(/<COLUMNS>\s*(.*?)\s*<\/COLUMNS>/);
+
     const dataMatches = xml.matchAll(/<DATA>\s*(.*?)\s*<\/DATA>/g);
 
+
+
     if (columnsMatch) {
+
       const columns = columnsMatch[1].split('\t');
+
       for (const match of dataMatches) {
+
         const data = match[1].split('\t');
+
         const obj: any = {};
+
         columns.forEach((col, index) => {
+
           if (col) obj[col] = data[index];
+
         });
+
         results.push(obj);
+
       }
+
     }
+
     return results;
+
   }
 
+
+
   buildDmqlQuery(filters: PropertyFilter): string {
+
     // Base query: Active listings
+
     // L_StatusCatID=1 (Active)
+
     const criteria: string[] = ['(L_StatusCatID=1)'];
 
+
+
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
+
       const min = filters.minPrice ?? 0;
+
       // Use + for open-ended range if no max is strictly defined but logic implies range
+
       const range = filters.maxPrice ? `${min}-${filters.maxPrice}` : `${min}+`;
+
       criteria.push(`(L_AskingPrice=${range})`);
+
     }
+
+
 
     if (filters.city) {
+
       criteria.push(`(L_City="${filters.city}")`);
+
     }
+
+
 
     if (filters.minBeds !== undefined) {
+
       criteria.push(`(LM_Int1_11=${filters.minBeds}+)`);
+
     }
 
+
+
     if (filters.minBaths !== undefined) {
+
       criteria.push(`(LM_Dec_35=${filters.minBaths}+)`);
+
     }
+
 
 
     return criteria.join(',');
+
   }
+
+
 
   // --- Public Methods to be used by API Routes ---
 
+
+
   // Original searchProperties logic, but made private and to be wrapped by cache
+
   private async _searchProperties(filters: PropertyFilter = {}): Promise<any[]> {
+
     if (!this.capabilityUrls['Search']) throw new Error('Not logged in or no Search capability');
 
+
+
     const query = this.buildDmqlQuery(filters);
+
     console.log(`[RETS] Searching properties with query: ${query}`);
 
+
+
     const searchUrl = this.resolveUrl(this.capabilityUrls['Search']);
+
+    
+
+    // Increase limit slightly if sorting is requested to ensure we sort a decent pool
+
+    // But for now, stick to the requested limit to avoid massive payloads
+
+    const limit = filters.limit || 10;
+
+
+
     const response = await this.client.get(searchUrl, {
+
       params: {
+
         SearchType: 'Property',
+
         Class: 'RE_1',
+
         Query: query,
+
         QueryType: 'DMQL2',
+
         Count: 1,
+
         Format: 'COMPACT-DECODED',
-        Limit: filters.limit || 10,
+
+        Limit: limit,
+
         StandardNames: 0, // Request System Names to ensure we get custom fields like LM_Int1_11
+
       },
+
       auth: { username: this.config.username, password: this.config.password },
+
     });
 
-    const listings = this.parseCompact(response.data);
+
+
+    let listings = this.parseCompact(response.data);
+
     
+
+    // Apply client-side sorting
+
+    if (filters.sort) {
+
+        if (filters.sort === 'recent') {
+
+            listings.sort((a, b) => {
+
+                const dateA = new Date(a.L_InputDate || a.L_ListingDate || 0).getTime();
+
+                const dateB = new Date(b.L_InputDate || b.L_ListingDate || 0).getTime();
+
+                return dateB - dateA; // Descending
+
+            });
+
+        } else if (filters.sort === 'price_asc') {
+
+            listings.sort((a, b) => Number(a.L_AskingPrice || 0) - Number(b.L_AskingPrice || 0));
+
+        } else if (filters.sort === 'price_desc') {
+
+            listings.sort((a, b) => Number(b.L_AskingPrice || 0) - Number(a.L_AskingPrice || 0));
+
+        }
+
+    }
+
+
+
     // Fetch photos for each listing
+
     const listingsWithPhotos = await Promise.all(listings.map(async (listing) => {
+
         const listingId = listing.ListingID || listing.L_ListingID || listing.L_DisplayId;
+
         const photos = await this.fetchPhotos(listingId);
+
         return { ...listing, photos };
+
     }));
 
+
+
     return listingsWithPhotos;
+
   }
 
   // Cached version of searchProperties

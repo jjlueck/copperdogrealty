@@ -1,12 +1,39 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
-import { Home, Heart, Users, MapPin } from "lucide-react"
+import { Home, Heart, Users, MapPin, Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { PropertyCard, Listing, getVal } from "@/components/property-card"
 
 export default function HomePage() {
+  const [recentProperties, setRecentProperties] = useState<Listing[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRecentProperties = async () => {
+      try {
+        const response = await fetch("/api/properties?sort=recent&limit=3")
+        if (!response.ok) {
+          throw new Error("Failed to fetch recent properties")
+        }
+        const data = await response.json()
+        setRecentProperties(data)
+      } catch (err: any) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRecentProperties()
+  }, [])
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -17,7 +44,7 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 text-balance">
+                <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6 text-balance uppercase">
                   Every Home Deserves a Loving Family
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
@@ -53,7 +80,7 @@ export default function HomePage() {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Why Choose Copper Dog Realty?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 uppercase">Why Choose Copper Dog Realty?</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 We bring small-town warmth and big-time expertise to every transaction
               </p>
@@ -65,7 +92,7 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Heart className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2 text-foreground">Personalized Service</h3>
+                  <h3 className="font-semibold text-lg mb-2 text-foreground uppercase tracking-wide">Personalized Service</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Every client gets our full attention and dedication, just like family
                   </p>
@@ -77,7 +104,7 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <MapPin className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2 text-foreground">Local Expertise</h3>
+                  <h3 className="font-semibold text-lg mb-2 text-foreground uppercase tracking-wide">Local Expertise</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Deep knowledge of the Iowa Great Lakes region
                   </p>
@@ -89,7 +116,7 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Users className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2 text-foreground">Community Focused</h3>
+                  <h3 className="font-semibold text-lg mb-2 text-foreground uppercase tracking-wide">Community Focused</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     We're invested in building strong, thriving neighborhoods
                   </p>
@@ -101,7 +128,7 @@ export default function HomePage() {
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Home className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2 text-foreground">Trusted Guidance</h3>
+                  <h3 className="font-semibold text-lg mb-2 text-foreground uppercase tracking-wide">Trusted Guidance</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Honest advice and support through every step of your journey
                   </p>
@@ -115,7 +142,7 @@ export default function HomePage() {
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 uppercase">
                 Homes Waiting for Their Forever Families
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
@@ -123,36 +150,22 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative aspect-[4/3]">
-                    <Image
-                      src={`/images/placeholders/property-${i}.jpg`}
-                      alt={`Property ${i}`}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
-                      New Listing
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-xl mb-2 text-foreground">Charming Lakefront Home</h3>
-                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed">3 bed • 2 bath • 1,850 sq ft</p>
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                      This lovely home has been patiently waiting for a family to fill it with laughter and memories...
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-primary">$425,000</span>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground">Finding newest homes...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12 text-red-500">
+                <p>Failed to load featured properties.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                {recentProperties.map((property, index) => (
+                  <PropertyCard key={getVal(property, ['ListingID', 'L_ListingID', 'L_DisplayId']) || index} property={property} index={index} />
+                ))}
+              </div>
+            )}
 
             <div className="text-center">
               <Button size="lg" asChild>
@@ -165,7 +178,7 @@ export default function HomePage() {
         {/* CTA Section */}
         <section className="py-20 bg-primary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance">Ready to Find Your Perfect Home?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-balance uppercase tracking-tight">Ready to Find Your Perfect Home?</h2>
             <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90 leading-relaxed">
               Let's start your journey together. Our team is here to help you every step of the way.
             </p>

@@ -197,11 +197,23 @@ export class RetsClient {
 
 
 
-    if (filters.city) {
+        if (filters.city) {
 
-      criteria.push(`(L_City="${filters.city}")`);
 
-    }
+
+          // Handle multiple cities (comma separated)
+
+
+
+          const cities = filters.city.split(',').map(c => `"${c.trim()}"`).join(',');
+
+
+
+          criteria.push(`(L_City=${cities})`);
+
+
+
+        }
 
 
 

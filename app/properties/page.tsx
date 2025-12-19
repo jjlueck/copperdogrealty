@@ -136,11 +136,11 @@ function PropertiesContent() {
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="w-full justify-between font-normal"
+                      className="w-full justify-between font-normal truncate"
                     >
                       {filters.city
-                        ? cities.find((city) => city.value === filters.city)?.label
-                        : "Select city..."}
+                        ? filters.city.split(',').map(code => cities.find(c => c.value === code)?.label).filter(Boolean).join(", ")
+                        : "Select cities..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -165,32 +165,37 @@ function PropertiesContent() {
                             />
                             Any City
                           </CommandItem>
-                          {cities.map((city) => (
-                            <CommandItem
-                              key={city.value}
-                              value={city.label}
-                              onSelect={(currentValue) => {
-                                // cmdk returns the value (label) in lowercase.
-                                // We need to match it back to our city object to get the correct code (value).
-                                // Or we can assume currentValue matches city.label (case insensitive?)
-                                // Actually, cmdk uses the `value` prop for filtering but onSelect returns the text content or value prop?
-                                // Let's use the city object directly.
-                                setFilters((prev) => ({
-                                  ...prev,
-                                  city: city.value === filters.city ? "" : city.value,
-                                }))
-                                setOpen(false)
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  filters.city === city.value ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {city.label}
-                            </CommandItem>
-                          ))}
+                          {cities.map((city) => {
+                            const selectedCities = filters.city ? filters.city.split(',') : []
+                            const isSelected = selectedCities.includes(city.value)
+                            return (
+                              <CommandItem
+                                key={city.value}
+                                value={city.label}
+                                onSelect={() => {
+                                  let newCities;
+                                  if (isSelected) {
+                                    newCities = selectedCities.filter(c => c !== city.value)
+                                  } else {
+                                    newCities = [...selectedCities, city.value]
+                                  }
+                                  setFilters((prev) => ({
+                                    ...prev,
+                                    city: newCities.join(','),
+                                  }))
+                                  // Don't close on multi-select
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    isSelected ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {city.label}
+                              </CommandItem>
+                            )
+                          })}
                         </CommandGroup>
                       </CommandList>
                     </Command>

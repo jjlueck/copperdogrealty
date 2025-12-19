@@ -42,6 +42,12 @@ describe('RetsClient Unit Tests', () => {
     expect(query).toContain('(L_City="Spirit Lake")');
   });
 
+  it('buildDmqlQuery should handle multiple cities', () => {
+    const client = new RetsClient(mockConfig);
+    const query = client.buildDmqlQuery({ city: 'Spirit Lk,Okoboji' });
+    expect(query).toContain('(L_City="Spirit Lk","Okoboji")');
+  });
+
   it('buildDmqlQuery should handle minBeds', () => {
     const client = new RetsClient(mockConfig);
     const query = client.buildDmqlQuery({ minBeds: 3 });

@@ -132,8 +132,33 @@ async function main() {
         console.log(`ID: ${l.L_ListingID}, Date: ${l.L_ListingDate}`);
     });
 
+    // 3. Test Multi-City Query (Spirit Lake OR Okoboji)
+    const searchUrl2 = resolveUrl(searchPath);
+    const query2 = '(L_StatusCatID=1),(L_City=Spirit Lk,Okoboji)';
+    console.log(`Testing Multi-City Query: ${query2}`);
+    
+    const searchResponse2 = await client.get(searchUrl2, {
+      params: {
+        SearchType: 'Property',
+        Class: 'RE_1',
+        Query: query2, 
+        QueryType: 'DMQL2',
+        Count: 1,
+        Format: 'COMPACT-DECODED',
+        Limit: 10, 
+        StandardNames: 0 
+      },
+      auth: { username, password }
+    });
+
+    const listings2 = parseCompact(searchResponse2.data);
+    console.log(`Found ${listings2.length} listings in Spirit Lake OR Okoboji`);
+    
+    const citiesFound = new Set(listings2.map(l => l.L_City));
+    console.log('Cities found in result:', Array.from(citiesFound));
+
     /*
-    // 3. Fetch Photos for each listing
+    const slListing = listings.find(l => l.L_City && l.L_City.toLowerCase().includes('spirit'));
     ...
     */
     const listingsWithPhotos = await Promise.all(listings.map(async (listing) => {

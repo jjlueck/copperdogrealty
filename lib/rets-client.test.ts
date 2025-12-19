@@ -100,5 +100,27 @@ describe('RetsClient Integration Tests', () => {
       expect(detail).not.toBeNull();
       expect(detail).toHaveProperty('L_ListingID', first.L_ListingID);
     }
-  }, 30000); // 30s timeout for network calls
+  }, 30000);
+
+  it('should sort listings by price ascending', async () => {
+    const client = new RetsClient(config);
+    const listings = await client.searchProperties({ limit: 5, sort: 'price_asc' });
+    
+    if (listings.length >= 2) {
+      const prices = listings.map(l => Number(l.L_AskingPrice || 0));
+      const sortedPrices = [...prices].sort((a, b) => a - b);
+      expect(prices).toEqual(sortedPrices);
+    }
+  }, 30000);
+
+  it('should sort listings by price descending', async () => {
+    const client = new RetsClient(config);
+    const listings = await client.searchProperties({ limit: 5, sort: 'price_desc' });
+    
+    if (listings.length >= 2) {
+      const prices = listings.map(l => Number(l.L_AskingPrice || 0));
+      const sortedPrices = [...prices].sort((a, b) => b - a);
+      expect(prices).toEqual(sortedPrices);
+    }
+  }, 30000);
 });

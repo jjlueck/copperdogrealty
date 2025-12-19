@@ -29,6 +29,7 @@ function PropertiesContent() {
     maxPrice: "",
     minBeds: "",
     minBaths: "",
+    sort: "",
   })
 
   // Initialize filters from URL params on mount
@@ -39,6 +40,7 @@ function PropertiesContent() {
       maxPrice: searchParams.get("maxPrice") || "",
       minBeds: searchParams.get("minBeds") || "",
       minBaths: searchParams.get("minBaths") || "",
+      sort: searchParams.get("sort") || "",
     })
   }, [searchParams])
 
@@ -52,6 +54,7 @@ function PropertiesContent() {
       if (currentFilters.maxPrice) params.append("maxPrice", currentFilters.maxPrice)
       if (currentFilters.minBeds) params.append("minBeds", currentFilters.minBeds)
       if (currentFilters.minBaths) params.append("minBaths", currentFilters.minBaths)
+      if (currentFilters.sort) params.append("sort", currentFilters.sort)
       params.append("limit", "50")
 
       const response = await fetch(`/api/properties?${params.toString()}`)
@@ -75,6 +78,7 @@ function PropertiesContent() {
       maxPrice: searchParams.get("maxPrice") || "",
       minBeds: searchParams.get("minBeds") || "",
       minBaths: searchParams.get("minBaths") || "",
+      sort: searchParams.get("sort") || "",
     }
     fetchProperties(currentFilters)
   }, [searchParams])
@@ -94,6 +98,7 @@ function PropertiesContent() {
     if (filters.maxPrice) params.set("maxPrice", filters.maxPrice)
     if (filters.minBeds) params.set("minBeds", filters.minBeds)
     if (filters.minBaths) params.set("minBaths", filters.minBaths)
+    if (filters.sort) params.set("sort", filters.sort)
     
     router.push(`/properties?${params.toString()}`)
   }
@@ -185,6 +190,24 @@ function PropertiesContent() {
                   <option value="2">2+</option>
                   <option value="3">3+</option>
                   <option value="4">4+</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Sort By */}
+            <div className="w-full lg:w-48 space-y-2">
+              <Label htmlFor="sort" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Sort By</Label>
+              <div className="relative">
+                <select 
+                  id="sort" 
+                  name="sort" 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={filters.sort}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Newest</option>
+                  <option value="price_asc">Price: Low to High</option>
+                  <option value="price_desc">Price: High to Low</option>
                 </select>
               </div>
             </div>

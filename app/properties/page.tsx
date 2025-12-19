@@ -36,6 +36,7 @@ function PropertiesContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
+  const [citySearch, setCitySearch] = useState("")
 
   // Filter State
   const [filters, setFilters] = useState({
@@ -46,6 +47,9 @@ function PropertiesContent() {
     minBaths: "",
     sort: "",
   })
+
+  const selectedCityCodes = filters.city ? filters.city.split(',').filter(Boolean) : []
+  const selectedCities = cities.filter(c => selectedCityCodes.includes(c.value))
 
   // Initialize filters from URL params on mount
   useEffect(() => {
@@ -139,66 +143,99 @@ function PropertiesContent() {
                       className="w-full justify-between font-normal truncate"
                     >
                       {filters.city
-                        ? filters.city.split(',').map(code => cities.find(c => c.value === code)?.label).filter(Boolean).join(", ")
+                        ? selectedCities.map(c => c.label).join(", ")
                         : "Select cities..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search city..." />
-                      <CommandList>
-                        <CommandEmpty>No city found.</CommandEmpty>
-                        <CommandGroup>
-                          <CommandItem
-                            value="any"
-                            onSelect={() => {
-                              setFilters((prev) => ({ ...prev, city: "" }))
-                              setOpen(false)
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                filters.city === "" ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            Any City
-                          </CommandItem>
-                          {cities.map((city) => {
-                            const selectedCities = filters.city ? filters.city.split(',') : []
-                            const isSelected = selectedCities.includes(city.value)
-                            return (
-                              <CommandItem
+                  <PopoverContent className="w-[200px] p-0" align="start">
+                    <div className="p-2">
+                      <Input
+                        placeholder="Search city..."
+                        value={citySearch}
+                        onChange={(e) => setCitySearch(e.target.value)}
+                        className="h-8 text-sm"
+                      />
+                      <div className="max-h-[300px] overflow-y-auto mt-2">
+                        {/* Selected Cities */}
+                        {selectedCities.length > 0 && (
+                          <div className="mb-2">
+                            <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Selected</div>
+                            {selectedCities.map((city) => (
+                              <div
                                 key={city.value}
-                                value={city.label}
-                                onSelect={() => {
-                                  let newCities;
-                                  if (isSelected) {
-                                    newCities = selectedCities.filter(c => c !== city.value)
-                                  } else {
-                                    newCities = [...selectedCities, city.value]
-                                  }
+                                role="option"
+                                onClick={() => {
+                                  const newCities = selectedCityCodes.filter(c => c !== city.value)
                                   setFilters((prev) => ({
                                     ...prev,
                                     city: newCities.join(','),
                                   }))
-                                  // Don't close on multi-select
                                 }}
+                                className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
                               >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    isSelected ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
+                                <Check className="mr-2 h-4 w-4 opacity-100" />
                                 {city.label}
-                              </CommandItem>
-                            )
-                          })}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
+                              </div>
+                            ))}
+                            <div
+                              role="option"
+                              onClick={() => {
+                                setFilters((prev) => ({ ...prev, city: "" }))
+                                setOpen(false)
+                              }}
+                              className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground text-muted-foreground italic"
+                            >
+                              Clear all
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Search Results */}
+                        {citySearch.length > 0 && (
+                          <div>
+                            <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Results</div>
+                            {cities
+                              .filter(city => 
+                                !selectedCityCodes.includes(city.value) && 
+                                city.label.toLowerCase().includes(citySearch.toLowerCase())
+                              )
+                              .slice(0, 10)
+                              .map((city) => (
+                                <div
+                                  key={city.value}
+                                  role="option"
+                                  onClick={() => {
+                                    const newCities = [...selectedCityCodes, city.value]
+                                    setFilters((prev) => ({
+                                      ...prev,
+                                      city: newCities.join(','),
+                                    }))
+                                    setCitySearch("")
+                                  }}
+                                  className="flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground"
+                                >
+                                  <Check className="mr-2 h-4 w-4 opacity-0" />
+                                  {city.label}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+
+                        {citySearch.length > 0 && cities.filter(city => 
+                                !selectedCityCodes.includes(city.value) && 
+                                city.label.toLowerCase().includes(citySearch.toLowerCase())
+                              ).length === 0 && (
+                          <div className="py-6 text-center text-sm">No city found.</div>
+                        )}
+
+                        {citySearch.length === 0 && selectedCities.length === 0 && (
+                           <div className="p-4 text-xs text-muted-foreground text-center">
+                             Type to search cities...
+                           </div>
+                        )}
+                      </div>
+                    </div>
                   </PopoverContent>
                 </Popover>
               </div>

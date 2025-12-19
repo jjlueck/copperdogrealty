@@ -192,10 +192,10 @@ export default function PropertyDetailsPage() {
                 priority
               />
               <div className="absolute inset-0 flex items-center justify-between px-4 w-full mx-auto md:max-w-4xl lg:max-w-5xl pointer-events-none">
-                <Button variant="ghost" onClick={prevPhoto} className="bg-black/30 hover:bg-black/60 text-white rounded-full w-10 h-10 md:w-40 md:h-40 flex items-center justify-center p-0 pointer-events-auto">
+                <Button variant="ghost" onClick={prevPhoto} className="bg-black/30 md:bg-transparent hover:bg-black/60 text-white rounded-full w-10 h-10 md:w-40 md:h-40 flex items-center justify-center p-0 pointer-events-auto transition-colors">
                   <ChevronLeft className="w-6 h-6 md:w-32 md:h-32" />
                 </Button>
-                <Button variant="ghost" onClick={nextPhoto} className="bg-black/30 hover:bg-black/60 text-white rounded-full w-10 h-10 md:w-40 md:h-40 flex items-center justify-center p-0 pointer-events-auto">
+                <Button variant="ghost" onClick={nextPhoto} className="bg-black/30 md:bg-transparent hover:bg-black/60 text-white rounded-full w-10 h-10 md:w-40 md:h-40 flex items-center justify-center p-0 pointer-events-auto transition-colors">
                   <ChevronRight className="w-6 h-6 md:w-32 md:h-32" />
                 </Button>
               </div>

@@ -121,7 +121,7 @@ function PropertiesContent() {
   return (
     <>
       {/* Hero / Filter Section */}
-      <section className="bg-white border-b border-border sticky top-0 z-10 shadow-sm">
+      <section className="bg-white border-b border-border sticky top-0 z-30 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <form onSubmit={handleSearch} className="flex flex-col lg:flex-row gap-4 items-end">
             

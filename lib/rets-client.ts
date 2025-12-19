@@ -17,6 +17,7 @@ export interface PropertyFilter {
   minBaths?: number;
   limit?: number;
   sort?: 'recent' | 'price_asc' | 'price_desc';
+  search?: string;
 }
 
 export class RetsClient {
@@ -110,6 +111,20 @@ export class RetsClient {
     // Base query: Active listings
     // L_StatusCatID=1 (Active)
     const criteria: string[] = ['(L_StatusCatID=1)'];
+
+    if (filters.search) {
+      const term = filters.search.trim();
+      // Search by ID (exact) or Address components (contains)
+      // Note: DMQL uses | for OR
+      const searchCriteria = [
+        `(L_ListingID=${term})`,
+        `(L_DisplayId=${term})`,
+        `(L_AddressNumber=${term})`,
+        `(L_AddressStreet=*${term}*)`
+      ].join('|');
+      
+      criteria.push(`(${searchCriteria})`);
+    }
 
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
       const min = filters.minPrice ?? 0;

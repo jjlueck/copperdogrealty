@@ -6,9 +6,12 @@ test.describe('Properties Page City Search', () => {
   });
 
   test('should allow searching and selecting a city', async ({ page }) => {
+    // 0. Toggle to "City" mode (default is text now)
+    await page.getByText('Search by City').click();
+
     // 1. Click the "Select cities..." button
-    const cityTrigger = page.getByRole('combobox', { name: 'City' }); // Aria-label or id might be needed, strictly button with id='city'
-    // The button has id="city" in the code, but label points to it.
+    const cityTrigger = page.locator('#city');
+    
     await expect(cityTrigger).toBeVisible();
     await cityTrigger.click();
 

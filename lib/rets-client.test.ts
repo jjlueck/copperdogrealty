@@ -70,6 +70,13 @@ describe('RetsClient Unit Tests', () => {
     const query = client.buildDmqlQuery(filters);
     expect(query).toBe('(L_StatusCatID=1),(L_AskingPrice=300000+),(L_City="Milford"),(LM_Int1_11=4+)');
   });
+
+  it('buildDmqlQuery should handle search term', () => {
+    const client = new RetsClient(mockConfig);
+    const query = client.buildDmqlQuery({ search: '123' });
+    // Check that it adds the OR group for search
+    expect(query).toContain('((L_ListingID=123)|(L_DisplayId=123)|(L_AddressNumber=123)|(L_AddressStreet=*123*))');
+  });
 });
 
 describe('RetsClient Integration Tests', () => {

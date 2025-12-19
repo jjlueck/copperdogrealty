@@ -21,12 +21,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import Image from "next/image"
-import { Heart, MapPin, Bed, Bath, Square, Search, Filter, ChevronLeft, ChevronRight, Check, ChevronsUpDown } from "lucide-react"
+import { Heart, MapPin, Bed, Bath, Square, Search, Filter, ChevronLeft, ChevronRight, Check, ChevronsUpDown, Map, LayoutGrid } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import cities from "@/app/constants/cities.json"
 import { PropertyCard, Listing, getVal } from "@/components/property-card"
+import { PropertyMap } from "@/components/property-map"
 import { cn } from "@/lib/utils"
 
 function PropertiesContent() {
@@ -37,6 +38,7 @@ function PropertiesContent() {
   const [error, setError] = useState<string | null>(null)
   const [open, setOpen] = useState(false)
   const [citySearch, setCitySearch] = useState("")
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
 
   // Filter State
   const [filters, setFilters] = useState({
@@ -140,7 +142,7 @@ function PropertiesContent() {
                       variant="outline"
                       role="combobox"
                       aria-expanded={open}
-                      className="w-full justify-between font-normal truncate"
+                      className="w-full justify-between font-normal truncate h-10"
                     >
                       {filters.city
                         ? selectedCities.map(c => c.label).join(", ")
@@ -252,6 +254,7 @@ function PropertiesContent() {
                   placeholder="No Min" 
                   value={filters.minPrice}
                   onChange={handleInputChange}
+                  className="h-10"
                 />
               </div>
               <div className="space-y-2 w-1/2">
@@ -263,6 +266,7 @@ function PropertiesContent() {
                   placeholder="No Max" 
                   value={filters.maxPrice}
                   onChange={handleInputChange}
+                  className="h-10"
                 />
               </div>
             </div>
@@ -323,11 +327,45 @@ function PropertiesContent() {
             </div>
 
             {/* Action Buttons */}
-            <div className="w-full lg:w-auto flex gap-2 pb-[1px]">
-              <Button type="submit" className="w-full lg:w-auto">
+            <div className="w-full lg:w-auto flex flex-col lg:flex-row lg:items-center gap-4 pb-[1px]">
+              <Button type="submit" className="w-full lg:w-auto h-10">
                 <Search className="w-4 h-4 mr-2" />
                 Search
               </Button>
+
+              <div className="flex items-center gap-3">
+                <div className="flex border rounded-md overflow-hidden bg-background h-10">
+                  <Button 
+                    type="button"
+                    variant={viewMode === 'list' ? 'default' : 'ghost'} 
+                    size="icon" 
+                    onClick={() => setViewMode('list')}
+                    className="rounded-none border-r h-full w-10"
+                    title="List View"
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    type="button"
+                    variant={viewMode === 'map' ? 'default' : 'ghost'} 
+                    size="icon" 
+                    onClick={() => setViewMode('map')}
+                    className="rounded-none h-full w-10"
+                    title="Map View"
+                  >
+                    <Map className="w-4 h-4" />
+                  </Button>
+                </div>
+                {viewMode === 'list' && (
+                  <button 
+                    type="button"
+                    onClick={() => setViewMode('map')}
+                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors whitespace-nowrap"
+                  >
+                    Show map view
+                  </button>
+                )}
+              </div>
             </div>
           </form>
         </div>
@@ -367,11 +405,20 @@ function PropertiesContent() {
           )}
 
           {!loading && !error && properties.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {properties.map((property, index) => (
-                <PropertyCard key={getVal(property, ['ListingID', 'L_ListingID', 'L_DisplayId']) || index} property={property} index={index} />
-              ))}
-            </div>
+            viewMode === 'list' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {properties.map((property, index) => (
+                  <PropertyCard key={getVal(property, ['ListingID', 'L_ListingID', 'L_DisplayId']) || index} property={property} index={index} />
+                ))}
+              </div>
+            ) : (
+              <div className="h-[70vh] w-full">
+                <PropertyMap 
+                  properties={properties} 
+                  apiKey={process.env.GOOGLE_MAPS_API_KEY || ""} 
+                />
+              </div>
+            )
           )}
         </div>
       </section>

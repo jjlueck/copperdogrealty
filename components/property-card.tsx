@@ -45,6 +45,10 @@ export interface Listing {
   MlsStatus?: string;
   L_Status?: string;
   
+  // Coordinates
+  LMD_MP_Latitude?: string;
+  LMD_MP_Longitude?: string;
+
   photos?: string[];
 }
 

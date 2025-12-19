@@ -7,13 +7,27 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import Image from "next/image"
-import { Heart, MapPin, Bed, Bath, Square, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react"
+import { Heart, MapPin, Bed, Bath, Square, Search, Filter, ChevronLeft, ChevronRight, Check, ChevronsUpDown } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import cities from "@/app/constants/cities.json"
 import { PropertyCard, Listing, getVal } from "@/components/property-card"
+import { cn } from "@/lib/utils"
 
 function PropertiesContent() {
   const router = useRouter()
@@ -21,6 +35,7 @@ function PropertiesContent() {
   const [properties, setProperties] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
 
   // Filter State
   const [filters, setFilters] = useState({
@@ -114,20 +129,73 @@ function PropertiesContent() {
             <div className="w-full lg:w-48 space-y-2">
               <Label htmlFor="city" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">City</Label>
               <div className="relative">
-                <select 
-                  id="city" 
-                  name="city" 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={filters.city}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Any City</option>
-                  {cities.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="city"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className="w-full justify-between font-normal"
+                    >
+                      {filters.city
+                        ? cities.find((city) => city.value === filters.city)?.label
+                        : "Select city..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search city..." />
+                      <CommandList>
+                        <CommandEmpty>No city found.</CommandEmpty>
+                        <CommandGroup>
+                          <CommandItem
+                            value="any"
+                            onSelect={() => {
+                              setFilters((prev) => ({ ...prev, city: "" }))
+                              setOpen(false)
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                filters.city === "" ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            Any City
+                          </CommandItem>
+                          {cities.map((city) => (
+                            <CommandItem
+                              key={city.value}
+                              value={city.label}
+                              onSelect={(currentValue) => {
+                                // cmdk returns the value (label) in lowercase.
+                                // We need to match it back to our city object to get the correct code (value).
+                                // Or we can assume currentValue matches city.label (case insensitive?)
+                                // Actually, cmdk uses the `value` prop for filtering but onSelect returns the text content or value prop?
+                                // Let's use the city object directly.
+                                setFilters((prev) => ({
+                                  ...prev,
+                                  city: city.value === filters.city ? "" : city.value,
+                                }))
+                                setOpen(false)
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  filters.city === city.value ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {city.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 

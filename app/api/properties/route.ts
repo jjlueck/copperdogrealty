@@ -1,17 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RetsClient } from '@/lib/rets-client';
+import { getRetsClient } from '@/lib/rets-client';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  const loginUrl = process.env.RETS_LOGIN_URL;
-  const username = process.env.RETS_USERNAME;
-  const password = process.env.RETS_PASSWORD;
-
-  if (!loginUrl || !username || !password) {
-    return NextResponse.json({ error: 'RETS credentials not configured' }, { status: 500 });
-  }
-
   const searchParams = request.nextUrl.searchParams;
   const minPrice = searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined;
   const maxPrice = searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined;
@@ -21,9 +13,9 @@ export async function GET(request: NextRequest) {
   const limit = searchParams.get('limit') ? Number(searchParams.get('limit')) : 20;
   const sort = searchParams.get('sort') as 'recent' | 'price_asc' | 'price_desc' | undefined;
 
-  const client = new RetsClient({ loginUrl, username, password });
-
   try {
+    const client = getRetsClient();
+
     // Login is now handled within the cached searchProperties function
     const listings = await client.searchProperties({
       minPrice,

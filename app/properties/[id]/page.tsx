@@ -302,10 +302,10 @@ export default function PropertyDetailsPage() {
                 <CardContent className="p-6">
                   <h3 className="font-bold text-lg mb-4">Contact Agent</h3>
                   <Button className="w-full mb-3" size="lg" asChild>
-                    <Link href="/contact">Schedule a Showing</Link>
+                    <Link href={`/contact?listingId=${listing.L_ListingID}&address=${encodeURIComponent(address)}`}>Schedule a Showing</Link>
                   </Button>
                   <Button variant="outline" className="w-full" asChild>
-                    <Link href="/contact">Ask a Question</Link>
+                    <Link href={`/contact?listingId=${listing.L_ListingID}&address=${encodeURIComponent(address)}`}>Ask a Question</Link>
                   </Button>
                   <div className="mt-8 pt-6 border-t border-border text-xs text-muted-foreground">
                     <p className="font-semibold mb-1">Listing Provided By:</p>

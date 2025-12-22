@@ -7,10 +7,15 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Mail, Phone, MapPin } from "lucide-react"
-import React, { useState } from "react"
+import { Mail, Phone, MapPin, Home } from "lucide-react"
+import React, { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 
-export default function ContactPage() {
+function ContactForm() {
+  const searchParams = useSearchParams()
+  const listingId = searchParams.get("listingId")
+  const address = searchParams.get("address")
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -19,8 +24,20 @@ export default function ContactPage() {
     interest: "",
     message: "",
     preferredContact: "",
+    propertyContext: "",
   })
   const [status, setStatus] = useState("")
+
+  useEffect(() => {
+    if (listingId || address) {
+      const context = [
+        listingId ? `MLS# ${listingId}` : "",
+        address ? address : ""
+      ].filter(Boolean).join(" - ")
+      
+      setFormData(prev => ({ ...prev, propertyContext: context }))
+    }
+  }, [listingId, address])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -43,15 +60,17 @@ export default function ContactPage() {
 
       if (response.ok) {
         setStatus("Message sent successfully!")
-                setFormData({
-                  firstName: "",
-                  lastName: "",
-                  email: "",
-                  phone: "",
-                  interest: "",
-                  message: "",
-                  preferredContact: "",
-                })      } else {
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          interest: "",
+          message: "",
+          preferredContact: "",
+          propertyContext: "",
+        })
+      } else {
         setStatus(`Failed to send message: ${data.message || "Unknown error"}`)
       }
     } catch (error) {
@@ -60,6 +79,82 @@ export default function ContactPage() {
     }
   }
 
+  return (
+    <Card>
+      <CardContent className="p-6 md:p-8">
+        <h2 className="text-2xl font-bold text-foreground mb-6">Send Us a Message</h2>
+
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input id="firstName" placeholder="John" value={formData.firstName} onChange={handleChange} />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input id="lastName" placeholder="Doe" value={formData.lastName} onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input id="phone" type="tel" placeholder="(555) 123-4567" value={formData.phone} onChange={handleChange} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="preferredContact">Preferred Contact Method</Label>
+            <select
+              id="preferredContact"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={formData.preferredContact}
+              onChange={handleChange}
+            >
+              <option value="">Select an option</option>
+              <option value="email">Email</option>
+              <option value="phone">Phone</option>
+              <option value="text">Text Message</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="interest">I'm Interested In</Label>
+            <select
+              id="interest"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={formData.interest}
+              onChange={handleChange}
+            >
+              <option value="">Select an option</option>
+              <option value="buying">Buying a Home</option>
+              <option value="selling">Selling a Home</option>
+              <option value="both">Both Buying and Selling</option>
+              <option value="commercial">Commercial Property</option>
+              <option value="consultation">General Consultation</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="message">Message</Label>
+            <Textarea id="message" placeholder="Tell us about what you're looking for..." rows={6} value={formData.message} onChange={handleChange} />
+          </div>
+
+          <Button type="submit" size="lg" className="w-full" disabled={status === "Sending..."}>
+            Send Message
+          </Button>
+          {status && <p className="text-center text-sm mt-2">{status}</p>}
+        </form>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default function ContactPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -86,77 +181,13 @@ export default function ContactPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Contact Form */}
               <div className="lg:col-span-2">
-                <Card>
-                  <CardContent className="p-6 md:p-8">
-                    <h2 className="text-2xl font-bold text-foreground mb-6">Send Us a Message</h2>
-
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="firstName">First Name</Label>
-                          <Input id="firstName" placeholder="John" value={formData.firstName} onChange={handleChange} />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="lastName">Last Name</Label>
-                          <Input id="lastName" placeholder="Doe" value={formData.lastName} onChange={handleChange} />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" type="tel" placeholder="(555) 123-4567" value={formData.phone} onChange={handleChange} />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="preferredContact">Preferred Contact Method</Label>
-                        <select
-                          id="preferredContact"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                          value={formData.preferredContact}
-                          onChange={handleChange}
-                        >
-                          <option value="">Select an option</option>
-                          <option value="email">Email</option>
-                          <option value="phone">Phone</option>
-                          <option value="text">Text Message</option>
-                        </select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="interest">I'm Interested In</Label>
-                        <select
-                          id="interest"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                          value={formData.interest}
-                          onChange={handleChange}
-                        >
-                          <option value="">Select an option</option>
-                          <option value="buying">Buying a Home</option>
-                          <option value="selling">Selling a Home</option>
-                          <option value="both">Both Buying and Selling</option>
-                          <option value="commercial">Commercial Property</option>
-                          <option value="consultation">General Consultation</option>
-                        </select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="message">Message</Label>
-                        <Textarea id="message" placeholder="Tell us about what you're looking for..." rows={6} value={formData.message} onChange={handleChange} />
-                      </div>
-
-                      <Button type="submit" size="lg" className="w-full" disabled={status === "Sending..."}>
-                        Send Message
-                      </Button>
-                      {status && <p className="text-center text-sm mt-2">{status}</p>}
-                    </form>
-                  </CardContent>
-                </Card>
+                <Suspense fallback={
+                  <div className="h-[600px] flex items-center justify-center bg-muted/20 rounded-lg animate-pulse">
+                    Loading contact form...
+                  </div>
+                }>
+                  <ContactForm />
+                </Suspense>
               </div>
 
               {/* Contact Info */}

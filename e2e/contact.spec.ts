@@ -31,4 +31,13 @@ test.describe('Contact Page', () => {
     // Since we cannot mock the API in this context, we'll check for the frontend status message.
     await expect(page.getByText('Message sent successfully!')).toBeVisible();
   });
+
+  test('should not display property context to the user even when provided in URL', async ({ page }) => {
+    const listingId = '12345';
+    const address = '123 Main St';
+    await page.goto(`/contact?listingId=${listingId}&address=${encodeURIComponent(address)}`);
+
+    await expect(page.getByText('Inquiring about:')).not.toBeVisible();
+    await expect(page.getByText(`MLS# ${listingId} - ${address}`)).not.toBeVisible();
+  });
 });

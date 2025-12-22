@@ -108,9 +108,13 @@ export class RetsClient {
   }
 
   buildDmqlQuery(filters: PropertyFilter): string {
-    // Base query: Active listings
-    // L_StatusCatID=1 (Active)
-    const criteria: string[] = ['(L_StatusCatID=1)'];
+    const criteria: string[] = [];
+
+    // Only apply Active status filter if we are not performing a specific text search
+    // This allows searching for specific IDs or addresses even if they are no longer Active (e.g. Sold, Pending)
+    if (!filters.search) {
+      criteria.push('(L_StatusCatID=1)');
+    }
 
     if (filters.search) {
       const term = filters.search.trim();

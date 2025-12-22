@@ -76,6 +76,8 @@ describe('RetsClient Unit Tests', () => {
     const query = client.buildDmqlQuery({ search: '123' });
     // Check that it adds the OR group for search
     expect(query).toContain('((L_ListingID=123)|(L_DisplayId=123)|(L_AddressNumber=123)|(L_AddressStreet=*123*))');
+    // Verify that the default active status filter is NOT included
+    expect(query).not.toContain('(L_StatusCatID=1)');
   });
 });
 

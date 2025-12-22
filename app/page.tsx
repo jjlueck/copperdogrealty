@@ -9,21 +9,27 @@ import Image from "next/image"
 import { Home, Heart, Users, MapPin, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { PropertyCard, Listing, getVal } from "@/components/property-card"
+import featuredIds from "@/app/constants/featured-listings.json"
 
 export default function HomePage() {
-  const [recentProperties, setRecentProperties] = useState<Listing[]>([])
+  const [featuredProperties, setFeaturedProperties] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchRecentProperties = async () => {
+    const fetchFeaturedProperties = async () => {
       try {
-        const response = await fetch("/api/properties?sort=recent&limit=3")
-        if (!response.ok) {
-          throw new Error("Failed to fetch recent properties")
-        }
-        const data = await response.json()
-        setRecentProperties(data)
+        const promises = featuredIds.map(id => 
+          fetch(`/api/properties/${id}`).then(res => {
+            if (!res.ok) return null;
+            return res.json();
+          })
+        );
+
+        const results = await Promise.all(promises);
+        const validListings = results.filter((item): item is Listing => item !== null);
+        
+        setFeaturedProperties(validListings)
       } catch (err: any) {
         setError(err.message)
       } finally {
@@ -31,7 +37,7 @@ export default function HomePage() {
       }
     }
 
-    fetchRecentProperties()
+    fetchFeaturedProperties()
   }, [])
 
   return (
@@ -153,7 +159,7 @@ export default function HomePage() {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
-                <p className="text-muted-foreground">Finding newest homes...</p>
+                <p className="text-muted-foreground">Loading featured homes...</p>
               </div>
             ) : error ? (
               <div className="text-center py-12 text-red-500">
@@ -161,7 +167,7 @@ export default function HomePage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                {recentProperties.map((property, index) => (
+                {featuredProperties.map((property, index) => (
                   <PropertyCard key={getVal(property, ['ListingID', 'L_ListingID', 'L_DisplayId']) || index} property={property} index={index} />
                 ))}
               </div>

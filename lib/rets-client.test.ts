@@ -71,12 +71,25 @@ describe('RetsClient Unit Tests', () => {
     expect(query).toBe('(L_StatusCatID=1),(L_AskingPrice=300000+),(L_City="Milford"),(LM_Int1_11=4+)');
   });
 
-  it('buildDmqlQuery should handle search term', () => {
+  it('buildDmqlQuery should handle numeric search term (IDs + Address)', () => {
     const client = new RetsClient(mockConfig);
     const query = client.buildDmqlQuery({ search: '123' });
-    // Check that it adds the OR group for search
-    expect(query).toContain('((L_ListingID=123)|(L_DisplayId=123)|(L_AddressNumber=123)|(L_AddressStreet=*123*))');
-    // Verify that the default active status filter is NOT included
+    // Expect IDs and Address
+    expect(query).toContain('(L_ListingID=123)');
+    expect(query).toContain('(L_DisplayId=123)');
+    expect(query).toContain('(L_AddressNumber=123)');
+    expect(query).toContain('(L_AddressStreet=*123*)');
+    expect(query).not.toContain('(L_StatusCatID=1)');
+  });
+
+  it('buildDmqlQuery should handle text search term (Address Only)', () => {
+    const client = new RetsClient(mockConfig);
+    const query = client.buildDmqlQuery({ search: 'Fisher' });
+    // Expect Address only, NO IDs to avoid errors
+    expect(query).not.toContain('(L_ListingID=Fisher)');
+    expect(query).not.toContain('(L_DisplayId=Fisher)');
+    expect(query).toContain('(L_AddressNumber=Fisher)');
+    expect(query).toContain('(L_AddressStreet=*Fisher*)');
     expect(query).not.toContain('(L_StatusCatID=1)');
   });
 });

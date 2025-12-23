@@ -118,14 +118,23 @@ export class RetsClient {
 
     if (filters.search) {
       const term = filters.search.trim();
-      // Search by ID (exact) or Address components (contains)
+      const isNumeric = /^\d+$/.test(term);
+
+      // Search components
+      // Only search IDs if the term is numeric to avoid "Illegal number" errors on server
+      const parts = [];
+      
+      if (isNumeric) {
+        parts.push(`(L_ListingID=${term})`);
+        parts.push(`(L_DisplayId=${term})`);
+      }
+      
+      // Always search address fields
+      parts.push(`(L_AddressNumber=${term})`);
+      parts.push(`(L_AddressStreet=*${term}*)`);
+
       // Note: DMQL uses | for OR
-      const searchCriteria = [
-        `(L_ListingID=${term})`,
-        `(L_DisplayId=${term})`,
-        `(L_AddressNumber=${term})`,
-        `(L_AddressStreet=*${term}*)`
-      ].join('|');
+      const searchCriteria = parts.join('|');
       
       criteria.push(`(${searchCriteria})`);
     }

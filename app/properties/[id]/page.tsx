@@ -33,7 +33,7 @@ export async function generateMetadata(
     ? listing.photos[0] 
     : undefined
 
-  const images = propertyImage ? [propertyImage, ...previousImages] : previousImages;
+  const images = propertyImage ? [propertyImage] : previousImages;
 
   return {
     title: `${address} | Copper Dog Realty`,

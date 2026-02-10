@@ -13,6 +13,7 @@ test.describe('Header', () => {
     
     await expect(header.getByRole('link', { name: 'Available Homes' })).toBeVisible();
     await expect(header.getByRole('link', { name: 'Our Team' })).toBeVisible();
+    await expect(header.getByRole('link', { name: 'Resources' })).toBeVisible();
     await expect(header.getByRole('link', { name: 'About' })).toBeVisible();
     await expect(header.getByRole('link', { name: 'Get in Touch' })).toBeVisible();
     
@@ -47,6 +48,7 @@ test.describe('Header', () => {
     
     await expect(dialog.getByRole('link', { name: 'Available Homes' })).toBeVisible();
     await expect(dialog.getByRole('link', { name: 'Our Team' })).toBeVisible();
+    await expect(dialog.getByRole('link', { name: 'Resources' })).toBeVisible();
     
     // Close menu by clicking outside or escape key
     await page.keyboard.press('Escape');

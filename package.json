@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "parse-utilities": "node scripts/parse-utilities.js",
+    "generate-pdfs": "node scripts/generate-utility-pdfs.mjs",
+    "prebuild": "pnpm run parse-utilities && pnpm run generate-pdfs",
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
@@ -72,6 +75,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
+    "@react-pdf/renderer": "^4.3.2",
     "@tailwindcss/postcss": "^4.1.9",
     "@types/node": "^22",
     "@types/nodemailer": "^7.0.3",

@@ -1,0 +1,459 @@
+[
+  {
+    "city": "Arnolds Park",
+    "providers": [
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Water & Garbage",
+        "items": [
+          "City of Arnolds Park — ☎️ 712-332-2341 | [bojihomes.com/utilities](https://www.bojihomes.com/utilities)"
+        ]
+      },
+      {
+        "category": "Sewer",
+        "items": [
+          "Iowa Great Lakes Sanitary District — ☎️ 712-338-2626 | [iowagreatlakessanitarydistrict.com](https://www.iowagreatlakessanitarydistrict.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Emmetsburg",
+    "providers": [
+      {
+        "category": "Water, Gas & Sewer",
+        "items": [
+          "Emmetsburg Municipal Utilities — ☎️ 712-852-2550 | [emmetsburg.com/emmetsburg-municipal-utilities/](https://emmetsburg.com/emmetsburg-municipal-utilities/)"
+        ]
+      },
+      {
+        "category": "Electric",
+        "items": [
+          "MidAmerican Energy — ☎️ 888-427-5632 | [midamericanenergy.com](https://www.midamericanenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "Windstream — ☎️ 855-806-2542 | [windstream.com](https://www.windstream.com/locations/ia/emmetsburg)",
+          "Northwest Communications — ☎️ 800-249-5251 | [ncn.net](https://ncn.net/emmetsburg/)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Estherville",
+    "providers": [
+      {
+        "category": "All Utilities (Electric, Water & Garbage)",
+        "items": [
+          "City of Estherville — ☎️ 712-362-7771 | [estherville.org/utilities](https://www.estherville.org/utilities)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink - ☎️ 833-977-2903 | [getcenturylink.com](https://www.getcenturylink.com/availability/ia/estherville)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Fostoria",
+    "providers": [
+      {
+        "category": "Utilities (Electric, Water, Sewer, Trash)",
+        "items": [
+          "Fostoria City Hall — ☎️ 712-262-8930"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink - ☎️ 800-244-1111 | [getcenturylink.com](https://www.centurylink.com/local/ia)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Graettinger",
+    "providers": [
+      {
+        "category": "Utilities",
+        "items": [
+          "Contact Graettinger City Hall — ☎️ 712-… municipal services vary; city office best for exact utility setup."
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink - ☎️ 800-244-1111 | [getcenturylink.com](https://www.centurylink.com/local/ia)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Lake Park",
+    "providers": [
+      {
+        "category": "Electric, Water, Sewer & Trash",
+        "items": [
+          "Contact City Hall — ☎️ 712-832-3527(typically)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink - ☎️ 800-244-1111 | [getcenturylink.com](https://www.centurylink.com/local/ia)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Milford",
+    "providers": [
+      {
+        "category": "Electric & Water",
+        "items": [
+          "Milford Utilities — ☎️ 712-338-4941 | [milford.ia.us](https://milford.ia.us)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Sewer",
+        "items": [
+          "Iowa Great Lakes Sanitary District — ☎️ 712-338-2626 | [iowagreatlakessanitarydistrict.com](https://www.iowagreatlakessanitarydistrict.com)"
+        ]
+      },
+      {
+        "category": "Garbage",
+        "items": [
+          "City of Milford — ☎️ 712-338-2741 | [milford.ia.us](https://milford.ia.us)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Milford Communications — ☎️ 712-338-4967 | [milfordcommunications.com](https://www.milfordcommunications.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Okoboji",
+    "providers": [
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Water",
+        "items": [
+          "City of Okoboji — ☎️ 712-332-2550 | [okobojicity.com](https://okobojicity.com)"
+        ]
+      },
+      {
+        "category": "Sewer",
+        "items": [
+          "Iowa Great Lakes Sanitary District — ☎️ 712-338-2626 | [iowagreatlakessanitarydistrict.com](https://www.iowagreatlakessanitarydistrict.com)"
+        ]
+      },
+      {
+        "category": "Garbage",
+        "items": [
+          "Waste Management — ☎️ 888-960-0008 | [wm.com](https://www.wm.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Orleans",
+    "providers": [
+      {
+        "category": "Water & Garbage",
+        "items": [
+          "City of Spirit Lake Utilities — ☎️ 712-336-1871 | [cityofspiritlake.org/services/local-utility-providers/](https://www.cityofspiritlake.org/services/local-utility-providers/)"
+        ]
+      },
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink - ☎️ 800-244-1111 | [getcenturylink.com](https://www.centurylink.com/local/ia)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Spencer",
+    "providers": [
+      {
+        "category": "Electric, Water & Sewer",
+        "items": [
+          "Spencer Municipal Utilities — ☎️ 712-580-5800 | [smunet.net](https://www.smunet.net)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Garbage",
+        "items": [
+          "Town & Country Disposal — ☎️ 712-472-2493 | [tandcdisposal.com](https://www.tandcdisposal.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink - ☎️ 800-244-1111 | [getcenturylink.com](https://www.centurylink.com/local/ia)",
+          "IGL TeleConnect - ☎️ 712-388-8352 | [iglteleconnect.com](https://iglteleconnect.com/)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Spirit Lake",
+    "providers": [
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)",
+          "Iowa Lakes Electric Cooperative — ☎️ 800-225-4532 | [ilec.coop](https://www.ilec.coop/)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Water & Garbage",
+        "items": [
+          "City of Spirit Lake Utilities — ☎️ 712-336-1871 | [cityofspiritlake.org/services/local-utility-providers/](https://www.cityofspiritlake.org/services/local-utility-providers/)"
+        ]
+      },
+      {
+        "category": "Sewer",
+        "items": [
+          "Iowa Great Lakes Sanitary District — ☎️ 712-338-2626 | [iowagreatlakessanitarydistrict.com](https://www.iowagreatlakessanitarydistrict.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink — ☎️ 800-244-1111 | [centurylink.com](https://www.centurylink.com)",
+          "Premier Communications — ☎️ 800-741-8351 | [premiercomm.com](https://www.premiercomm.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Superior",
+    "providers": [
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Water/Sewer/Trash",
+        "items": [
+          "Superior City Hall — ☎️ 712-858-4528"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink — ☎️ 800-244-1111 | [centurylink.com](https://www.centurylink.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Terril",
+    "providers": [
+      {
+        "category": "Utilities (Electric/Water/Sewer)",
+        "items": [
+          "Terril City Hall — ☎️ 712-853-6227"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink — ☎️ 800-244-1111 | [centurylink.com](https://www.centurylink.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Wahpeton",
+    "providers": [
+      {
+        "category": "Utilities (Water/Sewer/Garbage)",
+        "items": [
+          "Wahpeton City Hall — ☎️ 712-337-3522"
+        ]
+      },
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink — ☎️ 800-244-1111 | [centurylink.com](https://www.centurylink.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "Wallingford",
+    "providers": [
+      {
+        "category": "Utilities",
+        "items": [
+          "Wallingford City Hall — ☎️ 712-867-4585"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink — ☎️ 800-244-1111 | [centurylink.com](https://www.centurylink.com)"
+        ]
+      }
+    ]
+  },
+  {
+    "city": "West Okoboji",
+    "providers": [
+      {
+        "category": "Utilities (Water/Sewer/Trash)",
+        "items": [
+          "West Okoboji City Clerk — ☎️ 712-320-4394"
+        ]
+      },
+      {
+        "category": "Electric",
+        "items": [
+          "Alliant Energy — ☎️ 800-255-4268 | [alliantenergy.com](https://www.alliantenergy.com)"
+        ]
+      },
+      {
+        "category": "Gas",
+        "items": [
+          "Black Hills Energy — ☎️ 888-890-5554 | [blackhillsenergy.com](https://www.blackhillsenergy.com)"
+        ]
+      },
+      {
+        "category": "Phone/Internet/Cable",
+        "items": [
+          "Mediacom — ☎️ 800-332-0245 | [mediacomcable.com](https://www.mediacomcable.com)",
+          "CenturyLink — ☎️ 800-244-1111 | [centurylink.com](https://www.centurylink.com)"
+        ]
+      }
+    ]
+  }
+]

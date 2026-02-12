@@ -49,6 +49,9 @@ export interface Listing {
   LMD_MP_Latitude?: string;
   LMD_MP_Longitude?: string;
 
+  // Brokerage
+  LO1_OrganizationName?: string;
+
   photos?: string[];
 }
 

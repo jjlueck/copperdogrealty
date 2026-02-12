@@ -9,7 +9,6 @@ import Image from "next/image"
 import { Home, Heart, Users, MapPin, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { PropertyCard, Listing, getVal } from "@/components/property-card"
-import featuredIds from "@/app/constants/featured-listings.json"
 
 export default function HomePage() {
   const [featuredProperties, setFeaturedProperties] = useState<Listing[]>([])
@@ -19,25 +18,22 @@ export default function HomePage() {
   useEffect(() => {
     const fetchFeaturedProperties = async () => {
       try {
-        const promises = featuredIds.map(id => 
-          fetch(`/api/properties/${id}`).then(res => {
-            if (!res.ok) return null;
-            return res.json();
-          })
-        );
-
-        const results = await Promise.all(promises);
-        const validListings = results.filter((item): item is Listing => item !== null);
-        
-        setFeaturedProperties(validListings)
-      } catch (err: any) {
-        setError(err.message)
+        const res = await fetch('/api/properties/featured');
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Failed to load featured properties');
+        }
+        const data = await res.json();
+        const validListings = Array.isArray(data) ? data.filter((item: unknown): item is Listing => item !== null && typeof item === 'object') : [];
+        setFeaturedProperties(validListings);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to load featured properties');
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchFeaturedProperties()
+    fetchFeaturedProperties();
   }, [])
 
   return (

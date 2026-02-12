@@ -18,6 +18,7 @@ export interface PropertyFilter {
   limit?: number;
   sort?: 'recent' | 'price_asc' | 'price_desc';
   search?: string;
+  listOfficeId?: string;
 }
 
 export class RetsClient {
@@ -158,6 +159,10 @@ export class RetsClient {
 
     if (filters.minBaths !== undefined) {
       criteria.push(`(LM_Dec_35=${filters.minBaths}+)`);
+    }
+
+    if (filters.listOfficeId) {
+      criteria.push(`(L_ListOffice1=${filters.listOfficeId})`);
     }
 
     return criteria.join(',');

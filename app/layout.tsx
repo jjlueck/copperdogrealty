@@ -8,6 +8,10 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
+  // Without this, relative Open Graph image paths resolve against
+  // localhost:3000 in the build and against the deployment URL on Vercel,
+  // rather than the canonical domain.
+  metadataBase: new URL("https://copperdogrealty.com"),
   title: "Copper Dog Realty - Iowa Great Lakes Real Estate",
   description:
     "Boutique real estate brokerage serving the Iowa Great Lakes region. Find your perfect home with personalized service.",

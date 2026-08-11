@@ -18,6 +18,9 @@ yarn-error.log*
 
 # env files
 .env*
+# ...but the root placeholder template belongs in the repo.
+# Leading slash keeps this to the root, so nested .env files stay ignored.
+!/.env.example
 
 # vercel
 .vercel

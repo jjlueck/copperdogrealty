@@ -47,7 +47,10 @@ export function DogPhotoForm() {
   }, [previewUrl])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFields({ ...fields, [e.target.id]: e.target.value })
+    const { id, value } = e.target
+    // Functional update: building from the render closure's `fields` drops
+    // earlier edits when several changes land before a re-render.
+    setFields((prev) => ({ ...prev, [id]: value }))
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

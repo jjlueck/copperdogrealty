@@ -17,13 +17,24 @@ test.describe('Contact Page', () => {
   });
 
   test('should allow filling and submitting the form (frontend validation)', async ({ page }) => {
-    await page.getByLabel('First Name').fill('John');
-    await page.getByLabel('Last Name').fill('Doe');
-    await page.getByLabel('Email').fill('john.doe@example.com');
-    await page.getByLabel('Phone Number').fill('555-123-4567');
-    await page.getByLabel('I\'m Interested In').selectOption('buying');
-    await page.getByLabel('Message').fill('I am interested in buying a home.');
-    await page.getByLabel('Preferred Contact Method').selectOption('email');
+    // These are controlled inputs. Any fill that lands before React finishes
+    // hydrating is discarded when hydration re-renders from empty state, which
+    // previously reached the API as "Missing required fields". Retry the whole
+    // sequence until every required value has actually stuck.
+    await expect(async () => {
+      await page.getByLabel('First Name').fill('John');
+      await page.getByLabel('Last Name').fill('Doe');
+      await page.getByLabel('Email').fill('john.doe@example.com');
+      await page.getByLabel('Phone Number').fill('555-123-4567');
+      await page.getByLabel('I\'m Interested In').selectOption('buying');
+      await page.getByLabel('Message').fill('I am interested in buying a home.');
+      await page.getByLabel('Preferred Contact Method').selectOption('email');
+
+      await expect(page.getByLabel('First Name')).toHaveValue('John');
+      await expect(page.getByLabel('Last Name')).toHaveValue('Doe');
+      await expect(page.getByLabel('Email')).toHaveValue('john.doe@example.com');
+      await expect(page.getByLabel('Message')).toHaveValue('I am interested in buying a home.');
+    }).toPass({ timeout: 20000 });
 
     await page.getByRole('button', { name: 'Send Message' }).click();
 

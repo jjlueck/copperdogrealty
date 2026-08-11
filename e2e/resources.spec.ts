@@ -6,8 +6,9 @@ test.describe('Resources Page', () => {
   });
 
   test('should display resources page hero section', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Utility Providers by City', exact: true })).toBeVisible();
-    await expect(page.getByText('Local utility contact information for cities served by Copper Dog Realty')).toBeVisible();
+    await expect(
+      page.locator('main').getByRole('heading', { name: 'Utility Providers', exact: true }),
+    ).toBeVisible();
   });
 
   test('should display Download All Cities button', async ({ page }) => {

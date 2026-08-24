@@ -57,5 +57,11 @@ export default defineConfig({
     command: `npx next dev -p ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
+    env: {
+      // CI has no MLS credentials, so the real RETS client throws and every
+      // properties page renders its error state. Fixtures also keep local runs
+      // off the live MLS, so listing assertions do not depend on today's data.
+      RETS_FIXTURES: '1',
+    },
   },
 });

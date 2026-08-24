@@ -1,3 +1,19 @@
+# pnpm 11 reads allowBuilds; pnpm 10 reads onlyBuiltDependencies. Both are kept
+# so native binaries are compiled whichever version runs. These three ship
+# native code the build and test runners need: Tailwind's oxide engine, sharp,
+# and esbuild (via vite/vitest).
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
+  sharp: true
+
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
+  - esbuild
   - sharp
+
+# @vercel/blob depends on @vercel/oidc ^3.6.1. Unpinned, resolution takes the
+# newest release, which fails CI's minimumReleaseAge supply-chain check whenever
+# that release is under 24 hours old. Pinned to a settled version.
+overrides:
+  '@vercel/oidc': 3.8.2

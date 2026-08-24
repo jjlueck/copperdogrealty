@@ -2,6 +2,12 @@ import axios, { AxiosInstance } from 'axios';
 import { wrapper } from 'axios-cookiejar-support';
 import { CookieJar } from 'tough-cookie';
 import { unstable_cache } from 'next/cache';
+import {
+  FIXTURE_LISTINGS,
+  FIXTURE_PHOTOS,
+  filterFixtureListings,
+  fixtureListingId,
+} from './rets-fixtures';
 
 export interface RetsConfig {
   loginUrl: string;
@@ -360,10 +366,54 @@ export class RetsClient {
 }
 
 // Global instance for singleton pattern
+/**
+ * Stands in for RetsClient without touching the network, for e2e runs that have
+ * no MLS credentials. Subclassed so callers keep the RetsClient type and any
+ * method left un-overridden still fails loudly instead of faking a result.
+ *
+ * Defined here rather than in rets-fixtures.ts so that module stays free of a
+ * runtime import back to this one.
+ */
+export class FixtureRetsClient extends RetsClient {
+  constructor() {
+    super({
+      loginUrl: 'http://rets.invalid/login',
+      username: 'fixture',
+      password: 'fixture',
+    });
+  }
+
+  async login(): Promise<void> {}
+
+  async logout(): Promise<void> {}
+
+  async ensureLoggedIn(): Promise<void> {}
+
+  async searchProperties(filters: PropertyFilter = {}): Promise<any[]> {
+    return filterFixtureListings(FIXTURE_LISTINGS, filters);
+  }
+
+  async getListingDetails(id: string): Promise<any | null> {
+    return FIXTURE_LISTINGS.find((l) => fixtureListingId(l) === id) ?? null;
+  }
+
+  async fetchPhotos(): Promise<string[]> {
+    return [...FIXTURE_PHOTOS];
+  }
+}
+
 let globalRetsClient: RetsClient | null = null;
 
 export function getRetsClient(): RetsClient {
   if (globalRetsClient) {
+    return globalRetsClient;
+  }
+
+  // The e2e suite runs without MLS credentials. Serve deterministic fixtures
+  // instead of throwing, so pages render their real states rather than the
+  // "Unable to load properties" error path.
+  if (process.env.RETS_FIXTURES === '1') {
+    globalRetsClient = new FixtureRetsClient();
     return globalRetsClient;
   }
 

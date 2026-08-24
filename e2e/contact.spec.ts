@@ -17,6 +17,31 @@ test.describe('Contact Page', () => {
   });
 
   test('should allow filling and submitting the form (frontend validation)', async ({ page }) => {
+    // The real route needs RESEND_API_KEY, which CI does not have (and which
+    // would send a live email locally). Intercept it, but still assert the
+    // payload so a form that submits empty values fails instead of passing on
+    // an unconditional 200.
+    let submitted: any = null;
+    await page.route('**/api/contact', async (route) => {
+      submitted = route.request().postDataJSON();
+      const missing = ['firstName', 'lastName', 'email', 'message'].filter(
+        (field) => !submitted?.[field]
+      );
+      if (missing.length > 0) {
+        await route.fulfill({
+          status: 400,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: `Missing required fields: ${missing.join(', ')}` }),
+        });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Email sent successfully via Resend!' }),
+      });
+    });
+
     // These are controlled inputs. Any fill that lands before React finishes
     // hydrating is discarded when hydration re-renders from empty state, which
     // previously reached the API as "Missing required fields". Retry the whole
@@ -38,9 +63,17 @@ test.describe('Contact Page', () => {
 
     await page.getByRole('button', { name: 'Send Message' }).click();
 
-    // Expect a success message (assuming the API call is mocked or a success message is displayed on the frontend)
-    // Since we cannot mock the API in this context, we'll check for the frontend status message.
     await expect(page.getByText('Message sent successfully!')).toBeVisible();
+
+    expect(submitted).toMatchObject({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@example.com',
+      phone: '555-123-4567',
+      interest: 'buying',
+      message: 'I am interested in buying a home.',
+      preferredContact: 'email',
+    });
   });
 
   test('should not display property context to the user even when provided in URL', async ({ page }) => {

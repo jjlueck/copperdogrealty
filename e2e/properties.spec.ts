@@ -50,9 +50,16 @@ test.describe('Properties Page', () => {
   test('should allow searching by text', async ({ page }) => {
     const searchInput = page.getByPlaceholder('Address or MLS#');
     await expect(searchInput).toBeVisible();
-    await searchInput.focus();
-    await searchInput.pressSequentially('123 Main', { delay: 100 });
-    await expect(searchInput).toHaveValue('123 Main');
+
+    // Controlled input: keystrokes landing before hydration are discarded when
+    // React re-renders from empty state. Retry the whole sequence, clearing
+    // first so a partial value from an earlier attempt is not appended to.
+    await expect(async () => {
+      await searchInput.fill('');
+      await searchInput.focus();
+      await searchInput.pressSequentially('123 Main', { delay: 50 });
+      await expect(searchInput).toHaveValue('123 Main');
+    }).toPass({ timeout: 20000 });
     await page.getByRole('button', { name: 'Search', exact: true }).click();
     await expect(page.locator('main')).toBeVisible();
   });

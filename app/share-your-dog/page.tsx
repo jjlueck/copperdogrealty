@@ -123,8 +123,8 @@ export default function ShareYourDogPage() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2 text-foreground">Share</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Send it with the form below. Leave your email and we&apos;ll tell you if your dog
-                  is picked.
+                  Send it with the form below. Leave your email or phone number and we&apos;ll tell
+                  you if your dog is picked.
                 </p>
               </div>
             </div>

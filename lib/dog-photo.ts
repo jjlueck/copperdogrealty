@@ -28,6 +28,7 @@ export interface DogPhotoSubmission {
   dogName: string;
   senderName: string;
   email: string;
+  phone: string;
   message: string;
   consent: boolean;
 }
@@ -70,6 +71,32 @@ function clean(value: unknown, maxLength: number): string {
   return value.trim().slice(0, maxLength);
 }
 
+/**
+ * Loose plausibility check for a submitted phone number.
+ *
+ * Deliberately permissive about formatting (spaces, dashes, parens, dots, a
+ * leading +) and strict only about length: 7 digits covers a local US number
+ * and 15 is the E.164 maximum. The goal is catching typos and junk, not
+ * enforcing one country's format on a public form.
+ *
+ * Note this rejects letters, so extensions written as "x12" do not pass.
+ */
+export function isPlausiblePhone(value: string): boolean {
+  if (!/^[\d\s()+.-]+$/.test(value)) return false;
+  const digitCount = value.replace(/\D/g, '').length;
+  return digitCount >= 7 && digitCount <= 15;
+}
+
+/**
+ * True when the submitter left at least one way to reach them.
+ *
+ * The form uses this to block submission. The server intentionally does not
+ * require it: see the note in validateSubmission.
+ */
+export function hasContactMethod(fields: { email?: unknown; phone?: unknown }): boolean {
+  return clean(fields.email, 200).length > 0 || clean(fields.phone, 50).length > 0;
+}
+
 export type ValidationResult =
   | { ok: true; data: DogPhotoSubmission }
   | { ok: false; error: string };
@@ -101,6 +128,16 @@ export function validateSubmission(raw: unknown): ValidationResult {
     return { ok: false, error: 'That email address does not look right.' };
   }
 
+  const phone = clean(body.phone, 50);
+  if (phone && !isPlausiblePhone(phone)) {
+    return { ok: false, error: 'That phone number does not look right.' };
+  }
+
+  // Contact details stay optional here on purpose. The form requires one of
+  // email or phone (see hasContactMethod), but a photo that reaches this route
+  // without either is still worth delivering: losing it entirely is a worse
+  // outcome than emailing the office a dog we cannot reply about.
+
   return {
     ok: true,
     data: {
@@ -108,6 +145,7 @@ export function validateSubmission(raw: unknown): ValidationResult {
       dogName: clean(body.dogName, 100),
       senderName: clean(body.senderName, 100),
       email,
+      phone,
       message: clean(body.message, 2000),
       consent: body.consent === true,
     },
@@ -135,13 +173,14 @@ export function buildAttachmentFilename(dogName: string, blobUrl: string): strin
 }
 
 export function buildEmailHtml(submission: DogPhotoSubmission): string {
-  const { blobUrl, dogName, senderName, email, message, consent } = submission;
+  const { blobUrl, dogName, senderName, email, phone, message, consent } = submission;
 
   // Every value below is either a literal or passed through escapeHtml first.
   const rows: Array<[string, string]> = [
     ['Dog', dogName ? escapeHtml(dogName) : 'Not given'],
     ['From', senderName ? escapeHtml(senderName) : 'Not given'],
     ['Email', email ? `<a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>` : 'Not given'],
+    ['Phone', phone ? `<a href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a>` : 'Not given'],
     [
       'OK to feature publicly',
       consent ? 'Yes' : 'No — do not post this photo without asking first',

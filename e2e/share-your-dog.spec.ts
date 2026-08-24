@@ -31,6 +31,7 @@ test.describe('Share Your Dog Page', () => {
     await expect(page.getByLabel("Your dog's name")).toBeVisible();
     await expect(page.getByLabel('Your name')).toBeVisible();
     await expect(page.getByLabel('Email', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('Phone', { exact: true })).toBeVisible();
     await expect(page.getByLabel(/feature my dog/i)).toBeVisible();
   });
 
@@ -44,6 +45,68 @@ test.describe('Share Your Dog Page', () => {
     await expect(page.getByRole('img', { name: 'The photo you selected' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Share my dog' })).toBeEnabled();
     await expect(page.getByRole('button', { name: /Choose a different photo/i })).toBeVisible();
+  });
+
+  test('should block submission when neither email nor phone is given', async ({ page }) => {
+    // Nothing should reach the network, so fail loudly if anything tries.
+    let apiCalls = 0;
+    await page.route('**/api/dog-photo/**', async (route) => {
+      apiCalls += 1;
+      await route.abort();
+    });
+
+    await page.setInputFiles('#photo', 'public/images/little-free-library.jpg');
+    await page.getByRole('button', { name: 'Share my dog' }).click();
+
+    // Scoped to the form: Next.js keeps its own role="alert" route announcer
+    // on the page at all times.
+    const formAlert = page.locator('form [role="alert"]');
+    await expect(formAlert).toContainText('Please add an email address or a phone number');
+    await expect(page.getByLabel('Email', { exact: true })).toBeFocused();
+    expect(apiCalls).toBe(0);
+
+    // The complaint should clear as soon as they start filling one in.
+    await page.getByLabel('Phone', { exact: true }).fill('712-555-0134');
+    await expect(formAlert).toHaveCount(0);
+  });
+
+  test('should accept a phone number as the only contact detail', async ({ page }) => {
+    // Stub the upload-token route so the guard can be observed passing without
+    // a real photo reaching Blob storage or a real email being sent.
+    await page.route('**/api/dog-photo/upload', async (route) => {
+      await route.fulfill({
+        status: 400,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'stubbed in test' }),
+      });
+    });
+
+    await page.setInputFiles('#photo', 'public/images/little-free-library.jpg');
+    await page.getByLabel('Phone', { exact: true }).fill('712-555-0134');
+    await page.getByRole('button', { name: 'Share my dog' }).click();
+
+    // Past the contact check and into the upload, which is where the stub bites.
+    const formAlert = page.locator('form [role="alert"]');
+    await expect(formAlert).toContainText("We couldn't upload that photo");
+    await expect(page.getByText('Please add an email address')).toHaveCount(0);
+  });
+
+  test('should reject a malformed phone number before uploading anything', async ({ page }) => {
+    let apiCalls = 0;
+    await page.route('**/api/dog-photo/**', async (route) => {
+      apiCalls += 1;
+      await route.abort();
+    });
+
+    await page.setInputFiles('#photo', 'public/images/little-free-library.jpg');
+    await page.getByLabel('Phone', { exact: true }).fill('12345');
+    await page.getByRole('button', { name: 'Share my dog' }).click();
+
+    const formAlert = page.locator('form [role="alert"]');
+    await expect(formAlert).toContainText("That phone number doesn't look right");
+    await expect(page.getByLabel('Phone', { exact: true })).toBeFocused();
+    // The photo must not reach Blob storage only to be rejected afterwards.
+    expect(apiCalls).toBe(0);
   });
 
   test('should not be indexed by search engines', async ({ page }) => {

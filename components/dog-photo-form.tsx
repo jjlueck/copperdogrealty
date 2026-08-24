@@ -8,12 +8,18 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Camera, CheckCircle2 } from "lucide-react"
-import { BLOB_PATH_PREFIX, MAX_UPLOAD_BYTES } from "@/lib/dog-photo"
+import {
+  BLOB_PATH_PREFIX,
+  MAX_UPLOAD_BYTES,
+  hasContactMethod,
+  isPlausiblePhone,
+} from "@/lib/dog-photo"
 
 const EMPTY_FIELDS = {
   dogName: "",
   senderName: "",
   email: "",
+  phone: "",
   message: "",
   website: "", // honeypot
 }
@@ -35,10 +41,19 @@ export function DogPhotoForm() {
   const [file, setFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [error, setError] = useState("")
+  // Kept separate from `error` so it can render beside the fields it is about,
+  // rather than under the submit button with upload and server failures.
+  // `field` drives which inputs get marked invalid.
+  const [contactError, setContactError] = useState<{
+    message: string
+    field: "contact" | "phone"
+  } | null>(null)
   const [progress, setProgress] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isDone, setIsDone] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const emailInputRef = useRef<HTMLInputElement>(null)
+  const phoneInputRef = useRef<HTMLInputElement>(null)
 
   // Release the object URL whenever the selection changes or we unmount.
   useEffect(() => {
@@ -51,6 +66,8 @@ export function DogPhotoForm() {
     // Functional update: building from the render closure's `fields` drops
     // earlier edits when several changes land before a re-render.
     setFields((prev) => ({ ...prev, [id]: value }))
+    // Clear the complaint as soon as they start fixing it.
+    if (id === "email" || id === "phone") setContactError(null)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +102,34 @@ export function DogPhotoForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!file || isSubmitting) return
+
+    // Checked here rather than by disabling the button: a button that is
+    // greyed out for an unstated reason gives the visitor nothing to act on.
+    if (!hasContactMethod(fields)) {
+      setContactError({
+        field: "contact",
+        message:
+          "Please add an email address or a phone number so we can tell you if your dog is picked.",
+      })
+      emailInputRef.current?.focus()
+      return
+    }
+
+    // Caught before the upload starts, not after: the server rejects a bad
+    // number too, but by then the photo is already sitting in Blob storage with
+    // nothing left to reference it. The email input's type="email" gets the
+    // equivalent check from native form validation; type="tel" has no such rule.
+    const phone = fields.phone.trim()
+    if (phone && !isPlausiblePhone(phone)) {
+      setContactError({
+        field: "phone",
+        message: "That phone number doesn't look right. Please check it and try again.",
+      })
+      phoneInputRef.current?.focus()
+      return
+    }
+
+    setContactError(null)
 
     setIsSubmitting(true)
     setError("")
@@ -122,6 +167,7 @@ export function DogPhotoForm() {
 
   const resetForm = () => {
     setFields(EMPTY_FIELDS)
+    setContactError(null)
     setConsent(false)
     setFile(null)
     setPreviewUrl(null)
@@ -224,19 +270,48 @@ export function DogPhotoForm() {
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="Optional"
-          value={fields.email}
-          onChange={handleChange}
-          autoComplete="email"
-        />
-        <p className="text-sm text-muted-foreground">
-          Only so we can let you know if your dog is picked as Dog of the Month.
-        </p>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            ref={emailInputRef}
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={fields.email}
+            onChange={handleChange}
+            autoComplete="email"
+            aria-describedby="contact-hint"
+            aria-invalid={contactError?.field === "contact" ? true : undefined}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="phone">Phone</Label>
+          <Input
+            ref={phoneInputRef}
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            placeholder="(712) 555-0134"
+            value={fields.phone}
+            onChange={handleChange}
+            autoComplete="tel"
+            aria-describedby="contact-hint"
+            aria-invalid={contactError ? true : undefined}
+          />
+        </div>
+
+        {contactError ? (
+          <p id="contact-hint" className="text-sm text-destructive" role="alert">
+            {contactError.message}
+          </p>
+        ) : (
+          <p id="contact-hint" className="text-sm text-muted-foreground">
+            Leave either one, whichever you prefer. We only use it to tell you if your dog is
+            picked as Dog of the Month.
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">

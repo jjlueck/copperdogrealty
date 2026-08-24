@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   escapeHtml,
   isAllowedBlobUrl,
+  isPlausiblePhone,
+  hasContactMethod,
   validateSubmission,
   isHoneypotTripped,
   buildEmailSubject,
@@ -50,6 +52,41 @@ describe('isAllowedBlobUrl', () => {
   });
 });
 
+describe('isPlausiblePhone', () => {
+  it('accepts the formats people actually type', () => {
+    expect(isPlausiblePhone('7125550134')).toBe(true);
+    expect(isPlausiblePhone('(712) 555-0134')).toBe(true);
+    expect(isPlausiblePhone('712.555.0134')).toBe(true);
+    expect(isPlausiblePhone('+1 712 555 0134')).toBe(true);
+    expect(isPlausiblePhone('555-0134')).toBe(true);
+  });
+
+  it('rejects too few or too many digits', () => {
+    expect(isPlausiblePhone('12345')).toBe(false);
+    expect(isPlausiblePhone('1234567890123456')).toBe(false);
+  });
+
+  it('rejects letters and junk', () => {
+    expect(isPlausiblePhone('call me maybe')).toBe(false);
+    expect(isPlausiblePhone('712-555-0134 x12')).toBe(false);
+    expect(isPlausiblePhone('')).toBe(false);
+  });
+});
+
+describe('hasContactMethod', () => {
+  it('is true when either field has content', () => {
+    expect(hasContactMethod({ email: 'a@b.com' })).toBe(true);
+    expect(hasContactMethod({ phone: '712-555-0134' })).toBe(true);
+    expect(hasContactMethod({ email: 'a@b.com', phone: '712-555-0134' })).toBe(true);
+  });
+
+  it('is false when both are empty, missing, or whitespace', () => {
+    expect(hasContactMethod({})).toBe(false);
+    expect(hasContactMethod({ email: '', phone: '' })).toBe(false);
+    expect(hasContactMethod({ email: '   ', phone: '  ' })).toBe(false);
+  });
+});
+
 describe('validateSubmission', () => {
   it('accepts a photo with no other fields', () => {
     const result = validateSubmission({ blobUrl: VALID_BLOB_URL });
@@ -72,6 +109,24 @@ describe('validateSubmission', () => {
   it('rejects a malformed email but allows an empty one', () => {
     expect(validateSubmission({ blobUrl: VALID_BLOB_URL, email: 'nope' }).ok).toBe(false);
     expect(validateSubmission({ blobUrl: VALID_BLOB_URL, email: '' }).ok).toBe(true);
+  });
+
+  it('rejects a malformed phone but allows an empty one', () => {
+    expect(validateSubmission({ blobUrl: VALID_BLOB_URL, phone: 'nope' }).ok).toBe(false);
+    expect(validateSubmission({ blobUrl: VALID_BLOB_URL, phone: '' }).ok).toBe(true);
+  });
+
+  it('keeps a valid phone number', () => {
+    const result = validateSubmission({ blobUrl: VALID_BLOB_URL, phone: ' (712) 555-0134 ' });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.phone).toBe('(712) 555-0134');
+  });
+
+  it('still accepts a submission with no contact details at all', () => {
+    // The form requires email or phone; the server deliberately does not, so a
+    // photo that arrives without either is delivered rather than dropped.
+    const result = validateSubmission({ blobUrl: VALID_BLOB_URL });
+    expect(result.ok).toBe(true);
   });
 
   it('trims and length-caps free text', () => {
@@ -139,6 +194,7 @@ describe('buildEmailHtml', () => {
     dogName: '',
     senderName: '',
     email: '',
+    phone: '',
     message: '',
     consent: false,
   };
@@ -168,6 +224,13 @@ describe('buildEmailHtml', () => {
     const html = buildEmailHtml(base);
     expect(html).toContain(`<img src="${VALID_BLOB_URL}"`);
     expect(html).toContain(`<a href="${VALID_BLOB_URL}"`);
+  });
+
+  it('links a phone number and marks it absent otherwise', () => {
+    expect(buildEmailHtml({ ...base, phone: '(712) 555-0134' })).toContain(
+      '<a href="tel:(712) 555-0134">',
+    );
+    expect(buildEmailHtml(base)).toContain('<strong>Phone</strong>');
   });
 
   it('omits the message block entirely when no message was left', () => {

@@ -255,3 +255,83 @@ export function rasterize({ size, dark }, band, { scale = 8, quietZone = QUIET_Z
 
   return { data, width, height }
 }
+
+/**
+ * Advance widths for the PDF base-14 Helvetica faces, in 1/1000 em, covering
+ * printable ASCII (code 32 to 126). Fixed by the PDF specification, so these
+ * are exact rather than an approximation of whatever font a viewer substitutes.
+ *
+ * Needed because the card centres a line of text next to a vector emoji, and
+ * SVG has no layout engine to do that for us. Also lets the tests assert the
+ * copy still fits on one line instead of trusting a comment.
+ */
+const HELVETICA_WIDTHS = [
+  278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278,
+  556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 278, 278, 584, 584, 584, 556,
+  1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
+  667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556,
+  333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556,
+  556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584,
+]
+
+const HELVETICA_BOLD_WIDTHS = [
+  278, 333, 474, 556, 556, 889, 722, 238, 333, 333, 389, 584, 278, 333, 278, 278,
+  556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 333, 333, 584, 584, 584, 611,
+  975, 722, 722, 722, 722, 667, 611, 778, 722, 278, 556, 722, 611, 833, 722, 778,
+  667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 333, 278, 333, 584, 556,
+  333, 556, 611, 556, 611, 556, 333, 611, 611, 278, 278, 556, 278, 889, 611, 611,
+  611, 611, 389, 556, 333, 611, 556, 778, 556, 556, 500, 389, 280, 389, 584,
+]
+
+/**
+ * Width of a Helvetica string in points.
+ *
+ * Non-ASCII characters (an emoji, for instance) have no width here and are
+ * skipped, which is correct for this card: the emoji is drawn as vector
+ * artwork beside the text rather than set as a glyph.
+ */
+export function measureHelvetica(text, { size = 12, bold = false } = {}) {
+  const table = bold ? HELVETICA_BOLD_WIDTHS : HELVETICA_WIDTHS
+  let mille = 0
+  for (const char of text) {
+    const code = char.codePointAt(0)
+    if (code < 32 || code > 126) continue
+    mille += table[code - 32]
+  }
+  return (mille / 1000) * size
+}
+
+/* ------------------------------------------------------- the card ----- */
+/* Kept here rather than in the generator so the tests can check the copy
+   still fits on one line without importing a module that writes files. */
+
+/** 5x7in at 72pt/in. Sized to sit on the library door without overwhelming it. */
+export const PAGE = { width: 360, height: 504 }
+
+export const COPY = {
+  headline: ['Share a picture of your dog.'],
+  // The tada emoji is deliberately not part of this string. PDF's built-in
+  // Helvetica has no emoji glyphs, so setting it as text renders "<\u2030"
+  // in the print file. It is drawn as vector artwork beside the text instead.
+  hook: 'Your dog could be our Dog of the Month!',
+}
+
+/** Usable width inside the card, used to check the copy still fits one line. */
+export const CONTENT_WIDTH = 300
+
+/**
+ * Absolute positions, shared by both renderers. `top` is the top of each text
+ * box; the SVG renderer converts that to a baseline.
+ */
+export const LAYOUT = {
+  headline: { top: 62, size: 21, leading: 25, color: PALETTE.copper, bold: true },
+  hook: { top: 100, size: 12, leading: 15, color: PALETTE.ink },
+  // Sized a little above the text's cap height and nudged up, so it sits
+  // optically centred on the line rather than on the baseline.
+  emoji: { size: 13, gap: 4, dy: -1.4 },
+  // Deliberately unchanged at 272pt. The space freed by dropping the
+  // instruction line went into whitespace rather than a bigger code, so the
+  // scanned artwork stays exactly as tested.
+  qr: { top: 136, size: 272 },
+  wordmark: { top: 434, width: 180 },
+}

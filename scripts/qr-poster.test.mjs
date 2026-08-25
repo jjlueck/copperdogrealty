@@ -3,6 +3,10 @@ import jsQR from 'jsqr'
 import {
   SHARE_URL,
   QUIET_ZONE,
+  COPY,
+  LAYOUT,
+  CONTENT_WIDTH,
+  measureHelvetica,
   buildMatrix,
   logoBand,
   reservedModules,
@@ -88,6 +92,48 @@ describe('scannability', () => {
     for (let i = 0; i < width; i++) {
       expect(isWhite(i, margin - 1)).toBe(true)
       expect(isWhite(margin - 1, i)).toBe(true)
+    }
+  })
+})
+
+describe('card copy', () => {
+  const headlineWidth = () =>
+    measureHelvetica(COPY.headline[0], { size: LAYOUT.headline.size, bold: true })
+  const hookWidth = () =>
+    measureHelvetica(COPY.hook, { size: LAYOUT.hook.size }) +
+    LAYOUT.emoji.gap +
+    LAYOUT.emoji.size
+
+  it('measures Helvetica against the published advance widths', () => {
+    // Space is 278/1000 em and "!" is 278 in the regular face, so two of them
+    // at 100pt must come to 55.6pt. Pins the table to the spec rather than to
+    // whatever this machine happens to render.
+    expect(measureHelvetica(' !', { size: 100 })).toBeCloseTo(55.6, 5)
+    // The bold face is wider for "!" (333) but not for space (278).
+    expect(measureHelvetica(' !', { size: 100, bold: true })).toBeCloseTo(61.1, 5)
+  })
+
+  it('ignores characters it has no width for', () => {
+    // The tada emoji is artwork positioned beside the text, not a glyph in it,
+    // so it must contribute nothing to the measured run.
+    expect(measureHelvetica('a\u{1F389}', { size: 12 })).toBe(measureHelvetica('a', { size: 12 }))
+  })
+
+  it('keeps the headline on one line', () => {
+    // react-pdf would silently wrap an over-wide line and the SVG would run off
+    // the card, so the failure this guards against is invisible until it prints.
+    expect(headlineWidth()).toBeLessThan(CONTENT_WIDTH)
+  })
+
+  it('keeps the hook and its emoji on one line', () => {
+    expect(hookWidth()).toBeLessThan(CONTENT_WIDTH)
+  })
+
+  it('has no emoji left in the text runs', () => {
+    // PDF's base-14 Helvetica has no emoji glyphs: one in COPY renders as
+    // mojibake in the print file.
+    for (const line of [...COPY.headline, COPY.hook]) {
+      expect(line).toMatch(/^[\x20-\x7E]*$/)
     }
   })
 })

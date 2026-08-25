@@ -8,7 +8,7 @@
  * Run with: pnpm generate-qr
  */
 import React from 'react'
-import { Document, Page, View, Text, Svg, Path, Rect, renderToFile } from '@react-pdf/renderer'
+import { Document, Page, View, Text, Svg, Path, Rect, Circle, renderToFile } from '@react-pdf/renderer'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -19,6 +19,10 @@ import {
   logoBand,
   modulesPath,
   findersPath,
+  measureHelvetica,
+  PAGE,
+  COPY,
+  LAYOUT,
 } from './qr-poster.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -26,31 +30,6 @@ const rootDir = path.resolve(__dirname, '..')
 const imagesDir = path.join(rootDir, 'public/images')
 const outputDir = path.join(rootDir, 'public/resources')
 
-/** 5x7in at 72pt/in. Sized to sit on the library door without overwhelming it. */
-const PAGE = { width: 360, height: 504 }
-
-const COPY = {
-  // Each of these has to sit on one line. At 300pt of usable width the
-  // headline fits up to 22.6pt and the hook up to 16.7pt (measured, Helvetica),
-  // so the sizes in LAYOUT are set below those with room to spare. Lengthening
-  // either string means re-checking that it still fits: react-pdf would wrap it
-  // and the SVG would simply overflow the card.
-  headline: ['Share a picture of your dog.'],
-  hook: ['Your dog could be our Dog of the Month.'],
-  instruction: 'Point your phone camera at the code',
-}
-
-/**
- * Absolute positions, shared by both renderers. `top` is the top of each text
- * box; the SVG renderer converts that to a baseline.
- */
-const LAYOUT = {
-  headline: { top: 52, size: 21, leading: 25, color: PALETTE.copper, bold: true },
-  hook: { top: 89, size: 12, leading: 15, color: PALETTE.ink },
-  qr: { top: 124, size: 272 },
-  instruction: { top: 414, size: 10.5, color: PALETTE.muted },
-  wordmark: { top: 443, width: 180 },
-}
 
 /** Pull the path data out of a brand SVG so the logo files stay the source of truth. */
 function extractPaths(file) {
@@ -63,6 +42,40 @@ function extractPaths(file) {
 
 const dachshund = extractPaths('CopperDog_icon-solid.svg')
 const wordmark = extractPaths('CopperDog_word-mark.svg')
+
+/**
+ * Read a flat multi-colour SVG into shapes we can redraw in both outputs.
+ *
+ * Only handles the shapes Twemoji actually uses: paths and circles with plain
+ * fill attributes, no transforms, gradients or stylesheets. Anything else would
+ * silently drop, so assert the counts match what the file contains.
+ */
+function extractShapes(file) {
+  const svg = fs.readFileSync(path.join(imagesDir, file), 'utf-8')
+  const viewBox = svg.match(/viewBox="([^"]+)"/)[1].split(/\s+/).map(Number)
+
+  const shapes = []
+  for (const m of svg.matchAll(/<path\s+fill="([^"]+)"\s+d="([^"]+)"/g)) {
+    shapes.push({ kind: 'path', fill: m[1], d: m[2] })
+  }
+  for (const m of svg.matchAll(/<circle\s+fill="([^"]+)"\s+cx="([\d.]+)"\s+cy="([\d.]+)"\s+r="([\d.]+)"/g)) {
+    shapes.push({ kind: 'circle', fill: m[1], cx: +m[2], cy: +m[3], r: +m[4] })
+  }
+
+  const expected = (svg.match(/<(path|circle)\b/g) || []).length
+  if (shapes.length !== expected) {
+    throw new Error(
+      `${file}: parsed ${shapes.length} of ${expected} shapes. It uses markup this reader does not handle.`,
+    )
+  }
+  if (/transform=|<linearGradient|<radialGradient|<style/.test(svg)) {
+    throw new Error(`${file}: contains transforms, gradients or styles, which are not reproduced.`)
+  }
+
+  return { shapes, width: viewBox[2], height: viewBox[3] }
+}
+
+const tada = extractShapes('emoji/tada.svg')
 
 /** Fit a viewBox inside a box, preserving aspect and centring. */
 function fit(art, box) {
@@ -95,12 +108,27 @@ function geometry() {
     height: bandBox.height - inset * 2,
   }
 
+  // The hook is a text run followed by vector artwork. SVG has no layout engine,
+  // so centre the pair by measuring the text and placing both explicitly. The
+  // PDF uses the same numbers rather than flexbox, so the two cannot disagree.
+  const hookTextWidth = measureHelvetica(COPY.hook, { size: LAYOUT.hook.size })
+  const hookWidth = hookTextWidth + LAYOUT.emoji.gap + LAYOUT.emoji.size
+  const hookX = (PAGE.width - hookWidth) / 2
+
   return {
     matrix,
     band,
     unit,
     qrX,
     bandBox,
+    hookX,
+    hookTextWidth,
+    hookWidth,
+    emoji: {
+      x: hookX + hookTextWidth + LAYOUT.emoji.gap,
+      y: LAYOUT.hook.top + LAYOUT.emoji.dy,
+      scale: LAYOUT.emoji.size / tada.width,
+    },
     dog: fit(dachshund, dogBox),
     modules: modulesPath(matrix, band),
     finders: findersPath(matrix.size),
@@ -116,9 +144,13 @@ function geometry() {
 /* ---------------------------------------------------------------- SVG ----- */
 
 function renderSvg(g, moduleColor) {
+  // Helvetica then Arial, never Helvetica Neue: measureHelvetica describes the
+  // PDF base-14 Helvetica, Arial is metric-compatible with it, and Helvetica
+  // Neue is not. Getting this wrong shifts the emoji relative to the text and
+  // makes the SVG disagree with the PDF.
   const centered = (line, cfg, i = 0) =>
     `<text x="${PAGE.width / 2}" y="${cfg.top + cfg.size * 0.78 + i * (cfg.leading ?? 0)}" ` +
-    `text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" ` +
+    `text-anchor="middle" font-family="Helvetica, Arial, sans-serif" ` +
     `font-size="${cfg.size}"${cfg.bold ? ' font-weight="700"' : ''} fill="${cfg.color}">${line}</text>`
 
   const qrTransform = `translate(${g.qrX} ${LAYOUT.qr.top}) scale(${g.unit})`
@@ -132,7 +164,18 @@ function renderSvg(g, moduleColor) {
         fill="none" stroke="${PALETTE.copper}" stroke-width="1.25" opacity="0.5"/>
 
 ${COPY.headline.map((l, i) => '  ' + centered(l, LAYOUT.headline, i)).join('\n')}
-${COPY.hook.map((l, i) => '  ' + centered(l, LAYOUT.hook, i)).join('\n')}
+  <text x="${g.hookX}" y="${LAYOUT.hook.top + LAYOUT.hook.size * 0.78}" text-anchor="start"
+        font-family="Helvetica, Arial, sans-serif" font-size="${LAYOUT.hook.size}"
+        fill="${LAYOUT.hook.color}">${COPY.hook}</text>
+  <g transform="translate(${g.emoji.x} ${g.emoji.y}) scale(${g.emoji.scale})">
+${tada.shapes
+  .map((sh) =>
+    sh.kind === 'path'
+      ? `    <path fill="${sh.fill}" d="${sh.d}"/>`
+      : `    <circle fill="${sh.fill}" cx="${sh.cx}" cy="${sh.cy}" r="${sh.r}"/>`,
+  )
+  .join('\n')}
+  </g>
 
   <g transform="${qrTransform}" fill="${moduleColor}">
     <path d="${g.finders}" fill-rule="evenodd"/>
@@ -143,8 +186,6 @@ ${COPY.hook.map((l, i) => '  ' + centered(l, LAYOUT.hook, i)).join('\n')}
   <g transform="${dogTransform}" fill="${PALETTE.brand}">
 ${dachshund.ds.map((d) => `    <path d="${d}"/>`).join('\n')}
   </g>
-
-  ${centered(COPY.instruction, LAYOUT.instruction)}
 
   <g transform="${wmTransform}" fill="${PALETTE.brand}">
 ${wordmark.ds.map((d) => `    <path d="${d}"/>`).join('\n')}
@@ -214,7 +255,43 @@ function PosterDocument({ g, moduleColor }) {
       }),
 
       textBlock(COPY.headline, LAYOUT.headline),
-      textBlock(COPY.hook, LAYOUT.hook),
+
+      React.createElement(
+        View,
+        { style: { position: 'absolute', top: LAYOUT.hook.top, left: g.hookX } },
+        React.createElement(
+          Text,
+          {
+            style: {
+              fontSize: LAYOUT.hook.size,
+              lineHeight: LAYOUT.hook.leading / LAYOUT.hook.size,
+              color: LAYOUT.hook.color,
+              fontFamily: 'Helvetica',
+            },
+          },
+          COPY.hook,
+        ),
+      ),
+      React.createElement(
+        Svg,
+        {
+          style: { position: 'absolute', top: g.emoji.y, left: g.emoji.x },
+          width: LAYOUT.emoji.size,
+          height: LAYOUT.emoji.size,
+          viewBox: `0 0 ${tada.width} ${tada.height}`,
+        },
+        tada.shapes.map((sh, i) =>
+          sh.kind === 'path'
+            ? React.createElement(Path, { key: i, d: sh.d, fill: sh.fill })
+            : React.createElement(Circle, {
+                key: i,
+                cx: sh.cx,
+                cy: sh.cy,
+                r: sh.r,
+                fill: sh.fill,
+              }),
+        ),
+      ),
 
       // QR: one viewBox of module units, scaled by react-pdf.
       React.createElement(
@@ -243,7 +320,6 @@ function PosterDocument({ g, moduleColor }) {
         dachshund.ds.map((d, i) => React.createElement(Path, { key: i, d, fill: PALETTE.brand })),
       ),
 
-      textBlock([COPY.instruction], LAYOUT.instruction),
 
       absoluteSvg(
         g.wordmarkFit,

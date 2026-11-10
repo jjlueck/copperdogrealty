@@ -39,3 +39,6 @@ node_modules/
 
 # Apple file system
 *.DS_Store
+
+# Search Console pulls (pnpm gsc)
+/reports/

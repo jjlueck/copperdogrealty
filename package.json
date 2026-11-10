@@ -5,6 +5,7 @@
   "scripts": {
     "parse-utilities": "node scripts/parse-utilities.js",
     "generate-pdfs": "node scripts/generate-utility-pdfs.mjs",
+    "gsc": "node --env-file-if-exists=.env.local scripts/search-console.mjs",
     "prebuild": "pnpm run parse-utilities && pnpm run generate-pdfs",
     "build": "next build",
     "dev": "next dev",
@@ -83,6 +84,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "gh-pages": "^6.3.0",
+    "google-auth-library": "^11.3.4",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",

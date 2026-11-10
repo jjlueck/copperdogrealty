@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   // localhost:3000 in the build and against the deployment URL on Vercel,
   // rather than the canonical domain.
   metadataBase: new URL("https://copperdogrealty.com"),
+  // "./" resolves to each page's own path, so every page declares itself as
+  // canonical. This collapses http, www and query-string variants.
+  alternates: {
+    canonical: "./",
+  },
   title: "Copper Dog Realty - Iowa Great Lakes Real Estate",
   description:
     "Boutique real estate brokerage serving the Iowa Great Lakes region. Find your perfect home with personalized service.",

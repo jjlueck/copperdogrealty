@@ -1,40 +1,32 @@
-"use client"
-
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import Image from "next/image"
-import { Home, Heart, Users, MapPin, Loader2 } from "lucide-react"
-import { useEffect, useState } from "react"
-import { PropertyCard, Listing, getVal } from "@/components/property-card"
+import { Home, Heart, Users, MapPin } from "lucide-react"
+import { PropertyCard, Listing } from "@/components/property-card"
+import { getFeaturedListings } from "@/lib/featured-listings"
 
-export default function HomePage() {
-  const [featuredProperties, setFeaturedProperties] = useState<Listing[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+// Rendered on the server so search engines see the featured homes rather than
+// a loading spinner. Refreshed every 5 minutes, matching the featured API.
+export const revalidate = 300
 
-  useEffect(() => {
-    const fetchFeaturedProperties = async () => {
-      try {
-        const res = await fetch('/api/properties/featured');
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || 'Failed to load featured properties');
-        }
-        const data = await res.json();
-        const validListings = Array.isArray(data) ? data.filter((item: unknown): item is Listing => item !== null && typeof item === 'object') : [];
-        setFeaturedProperties(validListings);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Failed to load featured properties');
-      } finally {
-        setLoading(false);
-      }
+async function loadFeatured(): Promise<{ listings: Listing[]; error: boolean }> {
+  try {
+    const data = await getFeaturedListings()
+    return {
+      listings: data.filter((item: unknown): item is Listing => item !== null && typeof item === "object"),
+      error: false,
     }
+  } catch (err: unknown) {
+    console.error("[Home] Failed to load featured properties:", err)
+    return { listings: [], error: true }
+  }
+}
 
-    fetchFeaturedProperties();
-  }, [])
+export default async function HomePage() {
+  const { listings: featuredProperties, error } = await loadFeatured()
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -152,19 +144,14 @@ export default function HomePage() {
               </p>
             </div>
 
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-primary mb-4" />
-                <p className="text-muted-foreground">Loading featured homes...</p>
-              </div>
-            ) : error ? (
+            {error ? (
               <div className="text-center py-12 text-red-500">
                 <p>Failed to load featured properties.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 {featuredProperties.map((property, index) => (
-                  <PropertyCard key={getVal(property, ['ListingID', 'L_ListingID', 'L_DisplayId']) || index} property={property} index={index} />
+                  <PropertyCard key={property.ListingID || property.L_ListingID || property.L_DisplayId || index} property={property} index={index} />
                 ))}
               </div>
             )}

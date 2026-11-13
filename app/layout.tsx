@@ -17,9 +17,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "./",
   },
-  title: "Copper Dog Realty - Iowa Great Lakes Real Estate",
+  // The home page's title and description. Other pages set their own.
+  title: "Copper Dog Realty | Spirit Lake & Iowa Great Lakes Real Estate",
   description:
-    "Boutique real estate brokerage serving the Iowa Great Lakes region. Find your perfect home with personalized service.",
+    "Boutique real estate brokerage in Spirit Lake, Iowa. Browse homes for sale and get local guidance buying or selling across Okoboji, Arnolds Park, Milford, Spencer and the Iowa Great Lakes.",
   generator: "v0.app",
   icons: {
     icon: "/images/CopperDog_icon-solid.png",

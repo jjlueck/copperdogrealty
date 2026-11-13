@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -110,6 +111,12 @@ const dachshundImages = [
   "/images/dogs/dog-15.jpg",
   "/images/dogs/dog-16.jpg",
 ];
+
+export const metadata: Metadata = {
+  title: "Our Team | Copper Dog Realty",
+  description:
+    "Meet Beth Toliver, owner and broker, and the Copper Dog Realty team serving buyers and sellers across the Iowa Great Lakes.",
+}
 
 export default function TeamPage() {
   return (

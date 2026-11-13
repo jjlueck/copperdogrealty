@@ -1,8 +1,15 @@
+import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "About Copper Dog Realty | Iowa Great Lakes Real Estate",
+  description:
+    "A boutique brokerage in Spirit Lake, Iowa, named for the loyal dachshund. Learn how we help buyers and sellers across the Iowa Great Lakes.",
+}
 
 export default function AboutPage() {
   return (

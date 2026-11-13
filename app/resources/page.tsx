@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -30,6 +31,12 @@ function ProviderItem({ item }: { item: string }) {
       )}
     </span>
   )
+}
+
+export const metadata: Metadata = {
+  title: "Iowa Great Lakes Utility Providers by City | Copper Dog Realty",
+  description:
+    "Electric, gas, water and garbage providers for Spirit Lake, Okoboji, Arnolds Park, Milford and other Iowa Great Lakes towns, with printable PDFs.",
 }
 
 export default function ResourcesPage() {

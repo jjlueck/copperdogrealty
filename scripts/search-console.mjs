@@ -10,7 +10,7 @@
  * pointing at a service account key (added as a user on the property), or
  * `gcloud auth application-default login`. See .claude/skills/search-console.
  *
- * Run with: pnpm gsc <check|performance|sitemaps|inspect|report> [options]
+ * Run with: pnpm gsc <check|performance|sitemaps|submit-sitemap|inspect|report> [options]
  */
 import { GoogleAuth } from 'google-auth-library'
 import fs from 'fs'
@@ -29,10 +29,13 @@ const INSPECT = 'https://searchconsole.googleapis.com/v1/urlInspection/index:ins
 // URL Inspection allows 2,000 calls per day per property. Stay well under it.
 const MAX_INSPECTIONS = 300
 
-const auth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/webmasters.readonly'] })
+// Read-only unless a command writes. A service account gets whichever scope
+// is asked for; a gcloud login is limited to the scopes chosen at login.
+const readAuth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/webmasters.readonly'] })
+const writeAuth = new GoogleAuth({ scopes: ['https://www.googleapis.com/auth/webmasters'] })
 
-async function call(url, { method = 'GET', data } = {}) {
-  const client = await auth.getClient()
+async function call(url, { method = 'GET', data, write = false } = {}) {
+  const client = await (write ? writeAuth : readAuth).getClient()
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await client.request({ url, method, data })
@@ -44,6 +47,12 @@ async function call(url, { method = 'GET', data } = {}) {
         continue
       }
       const detail = err.response?.data?.error?.message || err.message
+      if (status === 403 && /insufficient authentication scopes/i.test(detail)) {
+        throw new Error(
+          `403 from Search Console: ${detail}\nThis command needs write access. Log in again with the ` +
+            `webmasters scope (see .claude/skills/search-console).`
+        )
+      }
       if (status === 403 && !/has not been used|is disabled/.test(detail)) {
         throw new Error(`403 from Search Console: ${detail}\nIs the credential added as a user on ${PROPERTY}?`)
       }
@@ -85,6 +94,13 @@ async function performance({ days = 28, dimensions = ['page'] } = {}) {
     if (!res.rows || res.rows.length < rowLimit) break
   }
   return { ...range, dimensions, rows }
+}
+
+/** Tells Google to fetch the sitemap now, then reads back what it recorded. */
+async function submitSitemap(sitemapUrl = `${SITE_ORIGIN}/sitemap.xml`) {
+  const feed = encodeURIComponent(sitemapUrl)
+  await call(`${WEBMASTERS}/sites/${site}/sitemaps/${feed}`, { method: 'PUT', write: true })
+  return call(`${WEBMASTERS}/sites/${site}/sitemaps/${feed}`)
 }
 
 async function sitemaps() {
@@ -166,6 +182,7 @@ const commands = {
       dimensions: (opts.dims || 'page').split(','),
     }),
   sitemaps: () => sitemaps(),
+  'submit-sitemap': () => submitSitemap(opts._[0]),
   inspect: () => inspect(opts._),
   report: async () => ({
     access: await check(),
@@ -176,8 +193,9 @@ const commands = {
 }
 
 if (!commands[command]) {
-  console.error('Usage: pnpm gsc <check|performance|sitemaps|inspect|report> [options]')
+  console.error('Usage: pnpm gsc <check|performance|sitemaps|submit-sitemap|inspect|report> [options]')
   console.error('  performance --days 28 --dims page,query')
+  console.error('  submit-sitemap [url]   (default: the site sitemap.xml; needs write access)')
   console.error('  inspect [url ...]   (no URLs: sitemaps + pages with impressions)')
   process.exit(1)
 }

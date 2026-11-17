@@ -15,7 +15,7 @@ the URL-prefix property `https://copperdogrealty.com/`. Results land in `reports
 |---|---|
 | `pnpm gsc check` | Confirms credentials and permission level on the property. Run first. |
 | `pnpm gsc report` | Everything below in one file. Default starting point. |
-| `pnpm gsc inspect [url ...]` | Per-URL index status. No URLs: every URL from submitted sitemaps plus pages with impressions in the last 90 days. Prints counts per coverage state. |
+| `pnpm gsc inspect [url ...]` | Per-URL index status. No URLs: every URL from submitted sitemaps plus pages with impressions in the last 90 days. Prints counts per coverage state, or, for URLs you name, each URL's state and last crawl time. |
 | `pnpm gsc performance --days 28 --dims page,query` | Clicks, impressions, CTR, position. Dims: `query`, `page`, `country`, `device`, `date`, `searchAppearance`. |
 | `pnpm gsc sitemaps` | Submitted sitemaps with error and warning counts. |
 | `pnpm gsc submit-sitemap [url]` | Submits `https://copperdogrealty.com/sitemap.xml` (or `url`) so Google fetches it now. The only command that writes, so it needs the `webmasters` scope. |

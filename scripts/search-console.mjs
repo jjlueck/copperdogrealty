@@ -206,7 +206,13 @@ try {
     console.log(JSON.stringify(data, null, 2))
   } else {
     console.log(`Saved ${save(command, data)}`)
-    if (data.byCoverage || data.indexing?.byCoverage) {
+    // For URLs named on the command line, show when Google last crawled each
+    // one, which tells you whether it has seen a recent deploy yet.
+    if (command === 'inspect' && opts._.length) {
+      for (const r of data.results) {
+        console.log(`${r.url}\t${r.coverageState || 'Unknown'}\tlast crawled ${r.lastCrawlTime || 'never'}`)
+      }
+    } else if (data.byCoverage || data.indexing?.byCoverage) {
       const groups = data.byCoverage || data.indexing.byCoverage
       for (const [state, urls] of Object.entries(groups)) console.log(`${urls.length}\t${state}`)
     }
